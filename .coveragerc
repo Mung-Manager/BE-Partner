@@ -1,0 +1,9 @@
+[run]
+omit =
+    */migrations/*
+    */urls.py
+    */models.py
+    */__init__.py
+    */abstracts.py
+    */apps.py
+    */base
