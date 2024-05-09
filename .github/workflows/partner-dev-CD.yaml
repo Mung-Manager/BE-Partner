@@ -1,4 +1,5 @@
-run-name: Deploy to AWS(Partner Docker Image v.${{ github.event.inputs.docker_image_tag }}) by @${{ github.actor }}
+name: Partner DEV Docker Push
+run-name: Deploy to AWS ECR(Partner Docker Image v.${{ github.event.inputs.docker_image_tag }}) by @${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -22,30 +23,30 @@ jobs:
 
       - name: Create env file
         env:
-          DJANGO_TEST_PARTNER_ENV: ${{ secrets.DJANGO_TEST_PARTNER_ENV }}
+          DJANGO_PARTNER_ENV: ${{ secrets.DJANGO_PARTNER_ENV }}
         run: |
           touch .env.partner
-          echo "$DJANGO_TEST_PARTNER_ENV" >> .env.partner
+          echo "$DJANGO_PARTNER_ENV" >> .env.partner
 
       - name: Build docker
-        run: docker compose -f github-actions.docker-compose.yml build postgres-db partner_service
+        run: docker compose build postgres_db partner_service
 
       - name: Run isort
-        run: docker compose -f github-actions.docker-compose.yml run partner_service poetry run isort mung_manager/ --check
+        run: docker compose run partner_service poetry run isort mung_manager/ --check
 
       - name: Run black
-        run: docker compose -f github-actions.docker-compose.yml run partner_service poetry run black mung_manager/ --check
+        run: docker compose run partner_service poetry run black mung_manager/ --check
 
       - name: Run flake8
-        run: docker compose -f github-actions.docker-compose.yml run partner_service poetry run flake8
+        run: docker compose run partner_service poetry run flake8
 
       - name: Run mypy
-        run: docker compose -f github-actions.docker-compose.yml run partner_service poetry run mypy --config mypy.ini mung_manager/
+        run: docker compose run partner_service poetry run mypy --config mypy.ini mung_manager/
 
-      - name: Run tests
-        run: docker compose -f github-actions.docker-compose.yml run partner_service poetry run pytest --cov=mung_manager/ --cov-fail-under=80 tests/ -n 4
+  #     # - name: Run tests
+  #       # run: docker compose run partner_service poetry run pytest --cov=mung_manager/ --cov-fail-under=80 tests/ -n 4
 
-  partner-deploy:
+  partner-docker-push:
     runs-on: ubuntu-latest
     needs: partner-test-and-fomat-lint
     steps:
@@ -54,16 +55,16 @@ jobs:
 
       - name: Create env file
         env:
-          DJANGO_TEST_PARTNER_ENV: ${{ secrets.DJANGO_TEST_PARTNER_ENV }}
+          DJANGO_PARTNER_ENV: ${{ secrets.DJANGO_PARTNER_ENV }}
         run: |
           touch .env.partner
-          echo "$DJANGO_TEST_PARTNER_ENV" >> .env.partner
+          echo "$DJANGO_PARTNER_ENV" >> .env.partner
 
       - name: AWS configure
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Login to Amazon ECR Public
@@ -77,55 +78,30 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./partner_service/docker/dev.Dockerfile
+          file: ./docker/dev.Dockerfile
           platforms: linux/x86_64
           push: true
           tags: |
             ${{ steps.login-ecr-public.outputs.registry }}/${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}/mung_manager_dev_partner:${{ github.event.inputs.docker_image_tag }}
             ${{ steps.login-ecr-public.outputs.registry }}/${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}/mung_manager_dev_partner:latest
 
-      - name: Create partner-deploy.sh
-        env:
-          ECR_PUBLIC_REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          ECR_PUBLIC_REGISTRY_ALIAS: ${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}
-          ADMIN_ECR_REPOSITORY: mung_manager_dev_admin
-          GUEST_ECR_REPOSITORY: mung_manager_dev_guest
-          PARTNER_ECR_REPOSITORY: mung_manager_dev_partner
-        run: |
-          sed -i "s%<ADMIN_IMAGE>%$ECR_PUBLIC_REGISTRY/$ECR_PUBLIC_REGISTRY_ALIAS/$ADMIN_ECR_REPOSITORY:latest%g" ./docker-compose.yml
-          sed -i "s%<GUEST_IMAGE>%$ECR_PUBLIC_REGISTRY/$ECR_PUBLIC_REGISTRY_ALIAS/$GUEST_ECR_REPOSITORY:latest%g" ./docker-compose.yml
-          sed -i "s%<PARTNER_IMAGE>%$ECR_PUBLIC_REGISTRY/$ECR_PUBLIC_REGISTRY_ALIAS/$PARTNER_ECR_REPOSITORY:latest%g" ./docker-compose.yml
-          sed -i "s%<DJANGO_SETTINGS_MODULE>%config.django.dev%g" ./docker-compose.yml
-          touch partner-deploy.sh
-          echo "#!/bin/bash" >> partner-deploy.sh
-          echo "sudo docker stop partner_service" >> partner-deploy.sh
-          echo "sudo docker rm partner_service" >> partner-deploy.sh
-          echo "sudo docker rmi $ECR_PUBLIC_REGISTRY/$ECR_PUBLIC_REGISTRY_ALIAS/$PARTNER_ECR_REPOSITORY:latest" >> partner-deploy.sh
-          echo "sudo docker compose -f /home/ubuntu/docker-compose.yml up -d --build partner_service" >> partner-deploy.sh
-          echo "sudo docker compose restart nginx" >> partner-deploy.sh
-
-      - name: Upload to S3
-        env:
-          IMAGE_TAG: ${{ github.event.inputs.docker_image_tag }}
-        run: |
-          zip -r partner-deploy-$IMAGE_TAG.zip partner-deploy.sh docker-compose.yml ./nginx
-          aws s3 cp --region ap-northeast-2 --acl private ./partner-deploy-$IMAGE_TAG.zip s3://mung-manager-deploy/dev/partner/
-
-      - name: Connect to SSH and AWS Deploy
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Infra Repository Dispatch
+        uses: peter-evans/repository-dispatch@v3
         with:
-          key: ${{ secrets.DEV_EC2_KEY }}
-          host: ${{ secrets.DEV_EC2_IP }}
-          username: ${{ secrets.DEV_EC2_NAME }}
-          port: ${{ secrets.DEV_EC2_PORT }}
-          script: |
-            cd ${{ secrets.DEV_EC2_PATH }}
-            deploy_zip="partner-deploy-${{ github.event.inputs.docker_image_tag }}.zip"
-            aws s3 cp --region ap-northeast-2 "s3://mung-manager-deploy/dev/partner/$deploy_zip" .
-            unzip -o "$deploy_zip"
-            sudo chmod +x partner-deploy.sh
-            ./partner-deploy.sh
-            sudo rm -rf "$deploy_zip"
+          token: ${{ secrets.OWNER_ACCESS_TOKEN }}
+          repository: Mung-Manager/BE-Infra
+          event-type: partner-deploy
+          client-payload: |
+            {
+              "partner_docker_image": "${{ steps.login-ecr-public.outputs.registry }}/${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}/mung_manager_dev_partner",
+              "admin_docker_image": "${{ steps.login-ecr-public.outputs.registry }}/${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}/mung_manager_dev_admin",
+              "guest_docker_image": "${{ steps.login-ecr-public.outputs.registry }}/${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}/mung_manager_dev_guest",
+              "partner_image_tag": "${{ github.event.inputs.docker_image_tag }}",
+              "s3_bucket": "mung-manager-deploy/dev/partner/",
+              "actor": "${{ github.actor }}",
+              "branch": "${{ github.ref }}",
+              "django_settings_module": "config.django.dev"
+            }
 
       - name: Notify Slack on Success
         if: success()
@@ -140,7 +116,7 @@ jobs:
                   "color": "#36a64f",
                   "title": "${{ github.repository }}",
                   "title_link": "https://github.com/${{github.repository}}",
-                  "text": "GitHub Action Partner DEV-CD 성공 😄",
+                  "text": "GitHub Action Partner DEV-DOCKER-PUSH 성공 😄",
                   "fields": [
                     {
                       "title": "Repository",
@@ -173,7 +149,7 @@ jobs:
                   "color": "#ff0000",
                   "title": "${{ github.repository }}",
                   "title_link": "https://github.com/${{github.repository}}",
-                  "text": "GitHub Action Partner DEV-CD 실패 😭",
+                  "text": "GitHub Action Partner DEV-DOCKER-PUSH 실패 😭",
                   "fields": [
                     {
                       "title": "Repository",

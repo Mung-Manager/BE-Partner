@@ -35,4 +35,4 @@ COPY pyproject.toml .
 RUN poetry install --without test
 
 # Copy the rest of the application files
-COPY . ./app
+COPY . /app

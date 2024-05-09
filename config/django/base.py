@@ -1,6 +1,6 @@
 import os
 
-from config.env import BASE_DIR, APPS_DIR, env
+from config.env import APPS_DIR, BASE_DIR, env
 
 SERVER_ENV = os.environ.get("DJANGO_SETTINGS_MODULE", "config.django.base")
 
@@ -21,6 +21,7 @@ LOCAL_APPS = [
     "mung_manager.users.apps.UsersConfig",
     "mung_manager.pet_kindergardens.apps.PetKindergardensConfig",
     "mung_manager.files.apps.FilesConfig",
+    "mung_manager.schemas.apps.SchemasConfig",
     "mung_manager.tickets.apps.TicketsConfig",
     "mung_manager.customers.apps.CustomersConfig",
     "mung_manager.reservations.apps.ReservationsConfig",
@@ -127,22 +128,22 @@ MEDIA_URL = "/partner/media/"
 # https://www.django-rest-framework.org/
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ("djangorestframework_camel_case.render.CamelCaseJSONRenderer",),
+    "DEFAULT_RENDERER_CLASSES": ("mung_manager.apis.render.CamelCaseJSONRenderer",),
     "DEFAULT_PARSER_CLASSES": ("djangorestframework_camel_case.parser.CamelCaseJSONParser",),
-    "EXCEPTION_HANDLER": "mung_manager.common.exception.exception_handler.default_exception_handler",
+    "EXCEPTION_HANDLER": "mung_manager.errors.exception_handler.default_exception_handler",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
-    "DEFAULT_AUTHENTICATION_CLASSES": ("mung_manager.common.authentication.CustomJWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    "DEFAULT_SCHEMA_CLASS": "config.settings.swagger.openapi.AutoSchema",
 }
 
 
 from config.settings.cors import *  # noqa
-from config.settings.oauth import *  # noqa
-from config.settings.jwt import *  # noqa
-from config.settings.files_and_storages import *  # noqa
-from config.settings.logging import *  # noqa
-
 from config.settings.debug_toolbar.settings import *  # noqa
 from config.settings.debug_toolbar.setup import DebugToolbarSetup  # noqa
+from config.settings.files_and_storages import *  # noqa
+from config.settings.jwt import *  # noqa
+from config.settings.logging import *  # noqa
+from config.settings.oauth import *  # noqa
 from config.settings.swagger.settings import *  # noqa
 from config.settings.swagger.setup import SwaggerSetup  # noqa
 

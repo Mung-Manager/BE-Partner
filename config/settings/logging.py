@@ -15,7 +15,10 @@ LOGGING = {
     },
     "formatters": {
         "django.server": {
-            "format": "[%(asctime)s] %(levelname)s [PID: %(process)d - %(processName)s] | [TID: %(thread)d - %(threadName)s] %(message)s",
+            "format": (
+                "[%(asctime)s] %(levelname)s [PID: %(process)d - %(processName)s] "
+                "| [TID: %(thread)d - %(threadName)s] %(message)s"
+            ),
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
