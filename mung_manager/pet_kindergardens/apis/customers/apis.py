@@ -25,7 +25,7 @@ class CustomerListAPI(APIAuthMixin, APIView):
         default_limit = 10
 
     class FilterSerializer(BaseSerializer):
-        customer_name = serializers.CharField(required=False, help_text="help_text 이름")
+        customer_name = serializers.CharField(required=False, help_text="이름")
         customer_phone_number = serializers.CharField(required=False, help_text="고객 전화번호")
         customer_pet_name = serializers.CharField(required=False, help_text="반려동물 이름")
         ticket_id = serializers.IntegerField(required=False, help_text="티켓 아이디")
