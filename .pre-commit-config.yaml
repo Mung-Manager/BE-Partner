@@ -1,4 +1,14 @@
 repos:
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy --config mypy.ini mung_manager/
+        always_run: true
+        pass_filenames: false
+        language: system
+        types: [python]
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -9,7 +19,7 @@ repos:
     rev: 23.7.0
     hooks:
     - id: black
-      args: ['-l', '140', '-t', 'py311']
+      args: ['-l', '88', '-t', 'py311']
 
   - repo: https://github.com/myint/autoflake
     rev: v1.4

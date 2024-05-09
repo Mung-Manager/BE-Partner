@@ -21,6 +21,7 @@ LOCAL_APPS = [
     "mung_manager.users.apps.UsersConfig",
     "mung_manager.pet_kindergardens.apps.PetKindergardensConfig",
     "mung_manager.files.apps.FilesConfig",
+    "mung_manager.schemas.apps.SchemasConfig",
     "mung_manager.tickets.apps.TicketsConfig",
     "mung_manager.customers.apps.CustomersConfig",
     "mung_manager.reservations.apps.ReservationsConfig",
@@ -127,11 +128,16 @@ MEDIA_URL = "/partner/media/"
 # https://www.django-rest-framework.org/
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ("djangorestframework_camel_case.render.CamelCaseJSONRenderer",),
-    "DEFAULT_PARSER_CLASSES": ("djangorestframework_camel_case.parser.CamelCaseJSONParser",),
-    "EXCEPTION_HANDLER": "mung_manager.common.exception.exception_handler.default_exception_handler",
+    "DEFAULT_RENDERER_CLASSES": ("mung_manager.apis.render.CamelCaseJSONRenderer",),
+    "DEFAULT_PARSER_CLASSES": (
+        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
+    ),
+    "EXCEPTION_HANDLER": "mung_manager.errors.exception_handler.default_exception_handler",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
-    "DEFAULT_AUTHENTICATION_CLASSES": ("mung_manager.common.authentication.CustomJWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "config.settings.swagger.openapi.AutoSchema",
 }
 
 
