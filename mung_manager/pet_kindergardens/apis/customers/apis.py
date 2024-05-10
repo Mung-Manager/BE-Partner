@@ -73,6 +73,7 @@ class CustomerListAPI(APIAuthMixin, APIView):
         memo = serializers.CharField(label="메모")
         recent_reserved_at = serializers.DateTimeField(label="최근 예약 일시")
         created_at = serializers.DateTimeField(label="생성 일시")
+        is_active = serializers.BooleanField(label="활성화 여부")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
