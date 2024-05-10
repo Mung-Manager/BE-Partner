@@ -103,7 +103,9 @@ APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-# Internationalization
+# ==================================================================== #
+#                   Internationalization                               #
+# ==================================================================== #
 LANGUAGE_CODE = "en-us"  # 언어 - 국가 설정
 
 TIME_ZONE = "Asia/Seoul"  # 시간대 설정
@@ -111,16 +113,6 @@ TIME_ZONE = "Asia/Seoul"  # 시간대 설정
 USE_I18N = True  # 국제화
 
 USE_TZ = True  # 장고 시간대 사용 여부
-
-
-# ==================================================================== #
-#                  file system (static) config                         #
-# ==================================================================== #
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATIC_URL = "/partner/static/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/partner/media/"
 
 # ==================================================================== #
 #                       DRF config                                     #
