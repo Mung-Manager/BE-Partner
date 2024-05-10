@@ -66,6 +66,12 @@ class DailyReservation(TimeStampedModel):
     time_pet_count = models.SmallIntegerField(db_comment="시간권 반려동물 수", default=0)
     all_day_pet_count = models.SmallIntegerField(db_comment="종일권 반려동물 수", default=0)
     hotel_pet_count = models.SmallIntegerField(db_comment="호텔 반려동물 수", default=0)
+    pet_kindergarden = models.ForeignKey(
+        "pet_kindergardens.PetKindergarden",
+        on_delete=models.CASCADE,
+        related_name="daily_reservations",
+        db_comment="펫 유치원 아이디",
+    )
 
     def __str__(self):
         return f"[{self.id}]: {self.reserved_at}"

@@ -16,6 +16,9 @@ from mung_manager.pet_kindergardens.apis.pet_kindergardens.api_managers import (
     PetkindergardenProfileAPIManager,
     PetkindergardenSearchAPIManager,
 )
+from mung_manager.pet_kindergardens.apis.reservations.api_managers import (
+    ReservationCalendarListAPIManager,
+)
 from mung_manager.pet_kindergardens.apis.tickets.api_managers import (
     TicketDetailManagerAPI,
     TicketListAPIManager,
@@ -85,18 +88,31 @@ pet_kindergarden_customer_urls = [
     path(
         "/<int:pet_kindergarden_id>/customers/<int:customer_id>/tickets",
         CustomerTicketListAPIManager.as_view(),
-        name="pet-kindergarden-detail-customers-tickets-list",
+        name="pet-kindergarden-customers-tickets-list",
     ),
     path(
         "/<int:pet_kindergarden_id>/customers/<int:customer_id>/tickets/<int:ticket_id>",
         CustomerTicketDetailAPIManager.as_view(),
-        name="pet-kindergarden-detail-customers-tickets-detail",
+        name="pet-kindergarden-customers-tickets-detail",
     ),
     path(
         "/<int:pet_kindergarden_id>/customers/<int:customer_id>/tickets/logs",
         CustomerTicketLogListAPIManger.as_view(),
-        name="pet-kindergarden-detail-customers-tickets-logs-list",
+        name="pet-kindergarden-customers-tickets-logs-list",
     ),
 ]
 
-urlpatterns = pet_kindergarden_urls + pet_kindergarden_ticket_urls + pet_kindergarden_customer_urls
+pet_kindergarden_reservation_urls = [
+    path(
+        "/<int:pet_kindergarden_id>/reservations/calendar",
+        ReservationCalendarListAPIManager.as_view(),
+        name="pet-kindergarden-reservations-calendar",
+    ),
+]
+
+urlpatterns = (
+    pet_kindergarden_urls
+    + pet_kindergarden_ticket_urls
+    + pet_kindergarden_customer_urls
+    + pet_kindergarden_reservation_urls
+)
