@@ -9,6 +9,9 @@ SPECTACULAR_SETTINGS = {
         "url": "https://github.com/saJaeHyukc",
         "email": "wogur981208@gmail.com",
     },
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
     "SWAGGER_UI_SETTINGS": {
         "dom_id": "#swagger-ui",
         "layout": "BaseLayout",

@@ -13,6 +13,7 @@ def show_swagger(*args, **kwargs) -> bool:
 
     try:
         import drf_spectacular  # noqa
+        import drf_spectacular_sidecar  # noqa
     except ImportError:
         logger.info("No installation found for: drf_spectacular")
         return False
@@ -29,7 +30,7 @@ class SwaggerSetup:
         if not _show_swagger:
             return INSTALLED_APPS
 
-        INSTALLED_APPS += ["drf_spectacular"]
+        INSTALLED_APPS += ["drf_spectacular", "drf_spectacular_sidecar"]
 
         return INSTALLED_APPS
 
