@@ -13,7 +13,7 @@ class CustomerSelector(AbstractCustomerSelector):
     """이 클래스는 고객을 데이터베이스에서 PULL하는 비즈니스 로직을 담당합니다."""
 
     def get_customer_list(self, filters: Optional[dict] = None) -> QuerySet[Customer]:
-        """이 함수는 필터로 삭제되지 않은 고객 반려동물, 최근 예약, 고객 티켓, 티켓을 포함한 고객 리스트를 가져옵니다.
+        """이 함수는 필터로 삭제되지 않은 고객 반려동물, 최근 예약, 고객 티켓, 티켓을 포함한 고객 리스트를 최신순으로 조회합니다.
 
         Args:
             filters (Optional[dict]): 필터
@@ -38,6 +38,7 @@ class CustomerSelector(AbstractCustomerSelector):
                     Max("reservations__updated_reserved_at"),
                 ),
             )
+            .order_by("-created_at")
         )
 
         return CustomerFilter(filters, qs).qs
