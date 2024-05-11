@@ -496,28 +496,3 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
             data=pagination_customer_ticket_reservation_data,
             status=status.HTTP_200_OK,
         )
-
-
-class CustomerPetDeleteAPI(APIAuthMixin, APIView):
-    class OutputSerializer(BaseSerializer):
-        is_deletable = serializers.BooleanField(label="삭제 가능 여부")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._customer_pet_service = CustomerContainer.customer_pet_service()
-
-    def delete(
-        self,
-        request: Request,
-        pet_kindergarden_id: int,
-        customer_id: int,
-        pet_id: int,
-    ) -> Response:
-        is_deletable = self._customer_pet_service.check_is_possible_delete_customer_pet(
-            pet_kindergarden_id=pet_kindergarden_id,
-            user=request.user,
-            customer_id=customer_id,
-            customer_pet_id=pet_id,
-        )
-        is_deletable_data = self.OutputSerializer({"is_deletable": is_deletable}).data
-        return Response(data=is_deletable_data, status=status.HTTP_200_OK)

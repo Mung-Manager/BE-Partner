@@ -85,22 +85,6 @@ ErrorCustomerPetNameDuplicatedSchema = OpenApiExample(
     response_only=True,
 )
 
-ErrorCustomerPetNotFoundSchema = OpenApiExample(
-    name="404(pet_not_found)",
-    summary="[Not Found]: Pet Not Found",
-    description="""
-    해당 반려동물을 찾을 수 없을 때 반환되는 응답입니다.
-    """,
-    value={
-        "success": False,
-        "statusCode": 404,
-        "code": "not_found_pet",
-        "message": "Customer pet does not exist.",
-        "data": {},
-    },
-    status_codes=["404"],
-    response_only=True,
-)
 
 ErrorCustomerPetAlreadyExistsSchema = OpenApiExample(
     name="400(pet_already_exists)",
@@ -113,23 +97,6 @@ ErrorCustomerPetAlreadyExistsSchema = OpenApiExample(
         "statusCode": 400,
         "code": "already_exists_customer_pet",
         "message": "Customer pet already exists.",
-        "data": {},
-    },
-    status_codes=["400"],
-    response_only=True,
-)
-
-ErrorCustomerPetReservationNotDeletedSchema = OpenApiExample(
-    name="400(pet_reservation_not_deleted)",
-    summary="[Validation Failed]: Pet Reservation Not Deleted",
-    description="""
-    예약이 존재하는 반려동물을 삭제할 때 반환되는 응답입니다.
-    """,
-    value={
-        "success": False,
-        "statusCode": 400,
-        "code": "validation_failed",
-        "message": "You can't delete pets with existing reservations.",
         "data": {},
     },
     status_codes=["400"],

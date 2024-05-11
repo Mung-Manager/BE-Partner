@@ -9,7 +9,6 @@ from mung_manager.pet_kindergardens.apis.customers.apis import (
     CustomerCreateAPI,
     CustomerDetailAPI,
     CustomerListAPI,
-    CustomerPetDeleteAPI,
     CustomerTicketActiveListAPI,
     CustomerTicketCreateAPI,
     CustomerTicketListAPI,
@@ -41,8 +40,6 @@ from mung_manager.schemas.errors.customers import (
     ErrorCustomerNotFoundSchema,
     ErrorCustomerPetAlreadyExistsSchema,
     ErrorCustomerPetNameDuplicatedSchema,
-    ErrorCustomerPetNotFoundSchema,
-    ErrorCustomerPetReservationNotDeletedSchema,
 )
 from mung_manager.schemas.errors.pet_kindergardens import (
     ErrorPetKindergardenNotFoundSchema,
@@ -258,7 +255,6 @@ class CustomerDetailAPIManager(BaseAPIManager):
             ErrorCustomerPetNameDuplicatedSchema,
             ErrorPhoneNumberInvalidSchema,
             ErrorCustomerPetAlreadyExistsSchema,
-            ErrorCustomerPetReservationNotDeletedSchema,
             # 401
             ErrorAuthenticationFailedSchema,
             ErrorNotAuthenticatedSchema,
@@ -274,7 +270,6 @@ class CustomerDetailAPIManager(BaseAPIManager):
             # 404
             ErrorCustomerNotFoundSchema,
             ErrorPetKindergardenNotFoundSchema,
-            ErrorCustomerPetNotFoundSchema,
             # 500
             ErrorUnknownServerSchema,
         ],
@@ -501,46 +496,3 @@ class CustomerTicketLogListAPIManger(BaseAPIManager):
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
-
-
-class CustomerPetDetailAPIManager(BaseAPIManager):
-    VIEWS_BY_METHOD = {
-        "DELETE": CustomerPetDeleteAPI.as_view,
-    }
-
-    @extend_schema(
-        tags=["반려동물 유치원-고객"],
-        summary="반려동물 유치원 고객 반려동물 삭제 여부 확인",
-        description="""
-        Rogic
-            - 유저가 반려동물 유치원 고객의 반려동물 삭제 여부를 확인합니다.
-        """,
-        responses={
-            status.HTTP_200_OK: VIEWS_BY_METHOD["DELETE"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
-        },
-        examples=[
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
-    )
-    def delete(self, request, *args, **kwargs):
-        return self.VIEWS_BY_METHOD["DELETE"]()(request, *args, **kwargs)

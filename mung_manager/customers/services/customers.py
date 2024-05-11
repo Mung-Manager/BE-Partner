@@ -22,7 +22,6 @@ from mung_manager.errors.exceptions import AlreadyExistsException, ValidationExc
 from mung_manager.pet_kindergardens.selectors.pet_kindergardens import (
     PetKindergardenSelector,
 )
-from mung_manager.reservations.selectors.reservations import ReservationSelector
 
 
 class CustomerService(AbstractCustomerService):
@@ -33,12 +32,10 @@ class CustomerService(AbstractCustomerService):
         customer_selector: CustomerSelector,
         customer_pet_selector: CustomerPetSelector,
         pet_kindergarden_selector: PetKindergardenSelector,
-        reservation_selector: ReservationSelector,
     ):
         self._customer_selector = customer_selector
         self._customer_pet_selector = customer_pet_selector
         self._pet_kindergarden_selector = pet_kindergarden_selector
-        self._reservation_selector = reservation_selector
 
     @transaction.atomic
     def create_customer(
@@ -292,18 +289,6 @@ class CustomerService(AbstractCustomerService):
                 raise ValidationException(
                     detail=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER_PET"),
                     code=SYSTEM_CODE.code("NOT_FOUND_CUSTOMER_PET"),
-                )
-
-            if (
-                self._reservation_selector.check_is_exists_pending_reservation_by_customer_id_and_customer_pet_ids(
-                    customer_id=customer_id,
-                    customer_pet_ids=[pet.id for pet in pets_to_be_deleted],
-                )
-                is True
-            ):
-                raise ValidationException(
-                    detail=SYSTEM_CODE.message("NOT_DELETED_RESERVATION_CUSTOMER_PET"),
-                    code=SYSTEM_CODE.code("NOT_DELETED_RESERVATION_CUSTOMER_PET"),
                 )
 
             pets_to_be_deleted.update(is_deleted=True, deleted_at=timezone.now())

@@ -45,11 +45,3 @@ class AbstractCustomerTicketService(ABC):
     @abstractmethod
     def register_ticket(self, user, customer_id: int, pet_kindergarden_id: int, ticket_id: int) -> CustomerTicket:
         pass
-
-
-class AbstractCustomerPetService(ABC):
-    @abstractmethod
-    def check_is_possible_delete_customer_pet(
-        self, user, pet_kindergarden_id: int, customer_id: int, pet_id: int
-    ) -> bool:
-        pass

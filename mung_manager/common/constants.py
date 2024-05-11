@@ -100,10 +100,6 @@ class SYSTEM_CODE:
         "already_exists_customer_pet",
         "Customer pet already exists.",
     )
-    NOT_DELETED_RESERVATION_CUSTOMER_PET = (
-        "validation_failed",
-        "You can't delete pets with existing reservations.",
-    )
 
     @classmethod
     def code(cls, code: str) -> str:

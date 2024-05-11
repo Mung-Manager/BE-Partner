@@ -4,7 +4,6 @@ from mung_manager.pet_kindergardens.apis.customers.api_managers import (
     CustomerBatchRegisterAPIManager,
     CustomerDetailAPIManager,
     CustomerListAPIManager,
-    CustomerPetDetailAPIManager,
     CustomerTicketActiveListAPIManager,
     CustomerTicketDetailAPIManager,
     CustomerTicketListAPIManager,
@@ -81,11 +80,6 @@ pet_kindergarden_customer_urls = [
         "/<int:pet_kindergarden_id>/customers/<int:customer_id>/toggle-is-active",
         CustomerToggleActiveAPIManager.as_view(),
         name="pet-kindergarden-customers-detail-toggle-is-active",
-    ),
-    path(
-        "/<int:pet_kindergarden_id>/customers/<int:customer_id>/pets/<int:pet_id>",
-        CustomerPetDetailAPIManager.as_view(),
-        name="pet-kindergarden-customers-pets-detail",
     ),
     path(
         "/<int:pet_kindergarden_id>/customers/<int:customer_id>/tickets",
