@@ -270,7 +270,7 @@ class CustomerService(AbstractCustomerService):
         customer, has_updated = update_model(instance=customer, fields=fields, data=data)
 
         # 고객 반려동물 추가/삭제
-        if pets_to_add:
+        if len(pets_to_add) > 0:
             check_object_or_already_exist(
                 self._customer_pet_selector.check_is_exists_undeleted_customer_pet_by_names_and_customer_id(
                     names=pets_to_add, customer_id=customer_id
@@ -281,7 +281,7 @@ class CustomerService(AbstractCustomerService):
 
             CustomerPet.objects.bulk_create([CustomerPet(name=pet, customer=customer) for pet in pets_to_add])
 
-        if pets_to_delete:
+        if len(pets_to_delete) > 0:
             pets_to_be_deleted = (
                 self._customer_pet_selector.get_undeleted_customer_pet_queryset_by_names_and_customer_id(
                     names=pets_to_delete, customer_id=customer_id

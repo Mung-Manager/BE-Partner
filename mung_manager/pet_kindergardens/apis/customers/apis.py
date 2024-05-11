@@ -260,12 +260,14 @@ class CustomerUpdateAPI(APIAuthMixin, APIView):
             required=False,
             label="추가할 반려동물 이름 목록",
             validators=[UniquePetNameValidator()],
+            default=[],
         )
         pets_to_delete = serializers.ListField(
             child=serializers.CharField(),
             required=False,
             label="삭제할 반려동물 이름 목록",
             validators=[UniquePetNameValidator()],
+            default=[],
         )
         memo = serializers.CharField(required=False, allow_blank=True, label="메모")
 
