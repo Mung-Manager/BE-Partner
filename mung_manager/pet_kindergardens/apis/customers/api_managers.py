@@ -380,6 +380,7 @@ class CustomerTicketListAPIManager(BaseAPIManager):
         Rogic
             - 유저가 반려동물 유치원 고객 정보 이용권 등록 목록을 조회합니다.
         """,
+        parameters=[VIEWS_BY_METHOD["GET"]().cls.FilterSerializer],
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
             status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
@@ -470,6 +471,7 @@ class CustomerTicketLogListAPIManger(BaseAPIManager):
         Rogic
             - 유저가 반려동물 유치원 고객 이용권 사용 내역 목록을 조회합니다.
         """,
+        parameters=[VIEWS_BY_METHOD["GET"]().cls.FilterSerializer],
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
             status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
