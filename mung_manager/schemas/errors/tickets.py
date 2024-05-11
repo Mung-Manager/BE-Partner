@@ -10,7 +10,7 @@ ErrorTicketNotFoundSchema = OpenApiExample(
         "success": False,
         "statusCode": 404,
         "code": "not_found_ticket",
-        "message": "Ticket not found",
+        "message": "Ticket does not exist.",
         "data": {},
     },
     status_codes=["404"],

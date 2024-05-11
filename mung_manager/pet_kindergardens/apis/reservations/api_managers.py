@@ -27,6 +27,10 @@ from mung_manager.schemas.errors.commons import (
 from mung_manager.schemas.errors.pet_kindergardens import (
     ErrorPetKindergardenNotFoundSchema,
 )
+from mung_manager.schemas.errors.reservations import (
+    ErrorDayOffAlreadyExistsSchema,
+    ErrorDayOffNotFoundSchema,
+)
 
 
 class ReservationCalendarListAPIManager(BaseAPIManager):
@@ -113,6 +117,7 @@ class ReservationDayOffListAPIManager(BaseAPIManager):
             ErrorPermissionDeniedSchema,
             # 404
             ErrorPetKindergardenNotFoundSchema,
+            ErrorDayOffNotFoundSchema,
             # 500
             ErrorUnknownServerSchema,
         ],
@@ -144,6 +149,7 @@ class ReservationDayOffDetailAPIManager(BaseAPIManager):
         examples=[
             # 400
             ErrorInvalidParameterFormatSchema,
+            ErrorDayOffAlreadyExistsSchema,
             # 401
             ErrorAuthenticationFailedSchema,
             ErrorNotAuthenticatedSchema,

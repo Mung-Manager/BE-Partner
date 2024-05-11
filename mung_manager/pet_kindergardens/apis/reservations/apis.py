@@ -80,7 +80,11 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
             year=filter_serializer.validated_data["year"], month=filter_serializer.validated_data["month"]
         )
         daily_reservations_data = self.OutputSerializer(
-            {"daily_reservations": daily_reservations, "day_offs": day_offs, "korea_special_days": korea_special_days}
+            {
+                "daily_reservations": daily_reservations,
+                "day_offs": day_offs,
+                "korea_special_days": korea_special_days,
+            }
         ).data
         return Response(data=daily_reservations_data, status=status.HTTP_200_OK)
 

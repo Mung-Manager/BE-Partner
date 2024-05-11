@@ -10,7 +10,7 @@ ErrorPetKindergardenNotFoundSchema = OpenApiExample(
         "success": False,
         "statusCode": 404,
         "code": "not_found_pet_kindergarden",
-        "message": "Pet Kindergarden not found",
+        "message": "Pet Kindergarden does not exist.",
         "data": {},
     },
     status_codes=["404"],
