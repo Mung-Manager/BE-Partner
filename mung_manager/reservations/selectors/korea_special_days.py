@@ -1,7 +1,7 @@
 from django.db.models.query import QuerySet
 
-from mung_manager.pet_kindergardens.models import KoreaSpecialDay
-from mung_manager.pet_kindergardens.selectors.abstracts import (
+from mung_manager.reservations.models import KoreaSpecialDay
+from mung_manager.reservations.selectors.abstracts import (
     AbstractKoreaSpecialDaySelector,
 )
 

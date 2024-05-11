@@ -1,7 +1,7 @@
 from django.db.models.query import QuerySet
 
-from mung_manager.pet_kindergardens.models import DayOff
-from mung_manager.pet_kindergardens.selectors.abstracts import AbstractDayOffSelector
+from mung_manager.reservations.models import DayOff
+from mung_manager.reservations.selectors.abstracts import AbstractDayOffSelector
 
 
 class DayOffSelector(AbstractDayOffSelector):

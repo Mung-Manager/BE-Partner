@@ -78,3 +78,44 @@ class DailyReservation(TimeStampedModel):
 
     class Meta:
         db_table = "daily_reservation"
+
+
+class DayOff(TimeStampedModel):
+    id = models.AutoField(
+        auto_created=True,
+        primary_key=True,
+        db_column="day_off_id",
+        serialize=False,
+        db_comment="휴무 아이디",
+    )
+    day_off_at = models.DateField(db_comment="휴무 날짜")
+    pet_kindergarden = models.ForeignKey(
+        "pet_kindergardens.PetKindergarden",
+        on_delete=models.CASCADE,
+        related_name="day_offs",
+        db_comment="펫 유치원 아이디",
+    )
+
+    def __str__(self):
+        return f"[{self.id}]: {self.pet_kindergarden.name} - {self.day_off}"
+
+    class Meta:
+        db_table = "day_off"
+
+
+class KoreaSpecialDay(TimeStampedModel):
+    id = models.AutoField(
+        auto_created=True,
+        primary_key=True,
+        db_column="korea_special_day_id",
+        serialize=False,
+        db_comment="한국 공휴일 아이디",
+    )
+    name = models.CharField(max_length=64, db_comment="공휴일 이름")
+    special_day_at = models.DateField(db_comment="공휴일 날짜")
+
+    def __str__(self):
+        return f"[{self.id}]: {self.name} - {self.special_day_at}"
+
+    class Meta:
+        db_table = "korea_special_day"

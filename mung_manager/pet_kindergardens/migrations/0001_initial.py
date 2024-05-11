@@ -17,19 +17,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='KoreaSpecialDay',
-            fields=[
-                ('id', models.AutoField(auto_created=True, db_column='korea_special_day_id', db_comment='한국 공휴일 아이디', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_comment='공휴일 이름', max_length=64)),
-                ('special_day_at', models.DateField(db_comment='공휴일 날짜')),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
-                ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
-            ],
-            options={
-                'db_table': 'korea_special_day',
-            },
-        ),
-        migrations.CreateModel(
             name='RawPetKindergarden',
             fields=[
                 ('id', models.AutoField(auto_created=True, db_comment='펫 유치원 로우 아이디', primary_key=True, serialize=False)),
@@ -78,19 +65,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'pet_kindergarden',
-            },
-        ),
-        migrations.CreateModel(
-            name='DayOff',
-            fields=[
-                ('id', models.AutoField(auto_created=True, db_column='day_off_id', db_comment='휴무 아이디', primary_key=True, serialize=False)),
-                ('day_off_at', models.DateField(db_comment='휴무 날짜')),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
-                ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
-                ('pet_kindergarden', models.ForeignKey(db_comment='펫 유치원 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='day_offs', to='pet_kindergardens.petkindergarden')),
-            ],
-            options={
-                'db_table': 'day_off',
             },
         ),
     ]
