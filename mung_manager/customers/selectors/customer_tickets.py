@@ -5,7 +5,7 @@ from mung_manager.customers.selectors.abstracts import AbstractCustomerTicketSel
 
 
 class CustomerTicketSelector(AbstractCustomerTicketSelector):
-    """이 클래스는 고객 티켓을 데이터베이스에서 PULL하는 비즈니스 로직을 담당합니다."""
+    """이 클래스는 고객 티켓을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
     def get_customer_ticket_with_ticket_queryset_by_customer_id(self, customer_id: int) -> QuerySet[CustomerTicket]:
         """이 함수는 고객 아이디로 티켓을 포함한 고객 티켓을 최신순으로 조회합니다.

@@ -16,7 +16,7 @@ from mung_manager.tickets.services.abstracts import AbstractTicketService
 
 
 class TicketService(AbstractTicketService):
-    """이 클래스는 티켓을 데이터베이스에서 PUSH 또는 검증하는 역할을 담당합니다."""
+    """이 클래스는 티켓을 DB에 PUSH하는 비즈니스 로직을 담당합니다."""
 
     def __init__(
         self,

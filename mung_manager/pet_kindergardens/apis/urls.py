@@ -18,6 +18,8 @@ from mung_manager.pet_kindergardens.apis.pet_kindergardens.api_managers import (
 )
 from mung_manager.pet_kindergardens.apis.reservations.api_managers import (
     ReservationCalendarListAPIManager,
+    ReservationDayOffDetailAPIManager,
+    ReservationDayOffListAPIManager,
 )
 from mung_manager.pet_kindergardens.apis.tickets.api_managers import (
     TicketDetailManagerAPI,
@@ -106,7 +108,17 @@ pet_kindergarden_reservation_urls = [
     path(
         "/<int:pet_kindergarden_id>/reservations/calendar",
         ReservationCalendarListAPIManager.as_view(),
-        name="pet-kindergarden-reservations-calendar",
+        name="pet-kindergarden-reservations-calendar-list",
+    ),
+    path(
+        "/<int:pet_kindergarden_id>/reservations/day-off",
+        ReservationDayOffListAPIManager.as_view(),
+        name="pet-kindergarden-reservations-day-off-list",
+    ),
+    path(
+        "/<int:pet_kindergarden_id>/reservations/day-off/<int:day_off_id>",
+        ReservationDayOffDetailAPIManager.as_view(),
+        name="pet-kindergarden-reservations-day-off-detail",
     ),
 ]
 

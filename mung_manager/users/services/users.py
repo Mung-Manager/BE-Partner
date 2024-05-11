@@ -14,7 +14,7 @@ from mung_manager.users.services.abstracts import AbstractUserService
 
 
 class UserService(AbstractUserService):
-    """이 클래스는 유저를 비즈니스 로직을 담당합니다."""
+    """이 클래스는 유저를 DB에 PUSH하는 비즈니스 로직을 담당합니다."""
 
     def __init__(self, user_selector: UserSelector):
         self._user_selector = user_selector

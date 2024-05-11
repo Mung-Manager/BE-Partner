@@ -8,6 +8,8 @@ from mung_manager.reservations.selectors.abstracts import AbstractReservationSel
 
 
 class ReservationSelector(AbstractReservationSelector):
+    """이 클래스는 예약을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
+
     def check_is_exists_unpending_reservation_by_customer_id_and_customer_pet_id(
         self, customer_id: int, customer_pet_id: int
     ) -> bool:

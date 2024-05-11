@@ -5,7 +5,7 @@ from mung_manager.users.selectors.abstracts import AbstractUserSelector
 
 
 class UserSelector(AbstractUserSelector):
-    """이 클래스는 유저를 데이터베이스에서 PULL하는 역할을 담당합니다."""
+    """이 클래스는 유저를 DB에 PULL하는 비즈니스 로직을 담당합니다."""
 
     def get_user_by_social_id(self, social_id: str) -> Optional[User]:
         """이 함수는 소셜 아이디로 유저를 조회합니다.

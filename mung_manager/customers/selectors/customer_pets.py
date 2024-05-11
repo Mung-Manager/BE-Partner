@@ -7,7 +7,7 @@ from mung_manager.customers.selectors.abstracts import AbstractCustomerPetSelect
 
 
 class CustomerPetSelector(AbstractCustomerPetSelector):
-    """이 클래스는 고객 반려동물을 데이터베이스에서 PULL하는 비즈니스 로직을 담당합니다."""
+    """이 클래스는 고객 반려동물을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
     def get_undeleted_customer_pet_queryset_by_names_and_customer_id(
         self, names: List[str], customer_id: int

@@ -11,7 +11,7 @@ from mung_manager.reservations.selectors.reservations import ReservationSelector
 
 
 class CustomerPetService(AbstractCustomerPetService):
-    """이 클래스는 고객 반려동물을 데이터베이스에서 PUSH하는 비즈니스 로직을 담당합니다."""
+    """이 클래스는 고객 반려동물을 DB에서 PUSH하는 비즈니스 로직을 담당합니다."""
 
     def __init__(
         self,

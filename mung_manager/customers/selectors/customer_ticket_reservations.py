@@ -7,7 +7,7 @@ from mung_manager.customers.selectors.abstracts import (
 
 
 class CustomerTicketReservationSelector(AbstractCustomerTicketReservationSelector):
-    """이 클래스는 고객 티켓 예약을 데이터베이스에서 PULL하는 비즈니스 로직을 담당합니다."""
+    """이 클래스는 고객 티켓 예약을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
     def get_customer_ticket_reservation_list_by_customer_id(
         self, customer_id: int

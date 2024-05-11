@@ -7,7 +7,7 @@ from mung_manager.tickets.selectors.abstracts import AbstractTicketSelector
 
 
 class TicketSelector(AbstractTicketSelector):
-    """이 클래스는 티켓을 데이터베이스에서 PULL하는 역할을 담당합니다."""
+    """이 클래스는 티켓을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
     def get_ticket_queryset_by_pet_kindergarden_id(self, pet_kindergarden_id: int) -> QuerySet[Ticket]:
         """이 함수는 반려동물 유치원 아이디로 티켓 쿼리셋을 조회합니다.

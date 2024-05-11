@@ -7,9 +7,7 @@ from mung_manager.pet_kindergardens.selectors.abstracts import (
 
 
 class PetKindergardenSelector(AbstractPetKindergardenSelector):
-    """
-    이 클래스는 반려동물 유치원을 SELECT, EXISTS를 위한 클래스입니다.
-    """
+    """이 클래스는 반려동물 유치원을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
     def check_is_exists_pet_kindergarden_by_user(self, user) -> bool:
         """

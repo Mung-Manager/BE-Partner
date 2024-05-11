@@ -7,6 +7,8 @@ from mung_manager.reservations.selectors.abstracts import (
 
 
 class KoreaSpecialDaySelector(AbstractKoreaSpecialDaySelector):
+    """이 클래스는 한국의 공휴일을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
+
     def get_korea_special_day_queryset_by_year_and_month(self, year: int, month: int) -> QuerySet[KoreaSpecialDay]:
         """년도와 월로 공휴일 리스트를 조회합니다.
 

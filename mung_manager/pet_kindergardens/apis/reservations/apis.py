@@ -21,6 +21,7 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
             label="일별 예약",
             many=True,
             fields={
+                "id": serializers.IntegerField(label="일별 예약 아이디"),
                 "time_pet_count": serializers.IntegerField(label="시간별 예약된 펫 수"),
                 "all_day_pet_count": serializers.IntegerField(label="하루 동안 예약된 펫 수"),
                 "hotel_pet_count": serializers.IntegerField(label="호텔 예약된 펫 수"),
@@ -31,6 +32,7 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
             label="휴무일",
             many=True,
             fields={
+                "id": serializers.IntegerField(label="휴무일 아이디"),
                 "day_off_at": serializers.DateField(label="휴무일 날짜"),
             },
         )
@@ -38,6 +40,7 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
             label="대한민국 공휴일",
             many=True,
             fields={
+                "id": serializers.IntegerField(label="공휴일 아이디"),
                 "name": serializers.CharField(label="공휴일 이름"),
                 "special_day_at": serializers.DateField(label="공휴일 날짜"),
             },
@@ -80,3 +83,41 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
             {"daily_reservations": daily_reservations, "day_offs": day_offs, "korea_special_days": korea_special_days}
         ).data
         return Response(data=daily_reservations_data, status=status.HTTP_200_OK)
+
+
+class ReservationDayOffCreateAPI(APIAuthMixin, APIView):
+    class InputSerializer(BaseSerializer):
+        day_off_at = serializers.DateField(required=True, help_text="휴무일 날짜")
+
+    class OutputSerializer(BaseSerializer):
+        day_off_at = serializers.DateField(label="휴무일 날짜")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._day_off_service = ReservationContainer.day_off_service()
+
+    def post(self, request: Request, pet_kindergarden_id: int) -> Response:
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        day_off = self._day_off_service.create_day_off(
+            pet_kindergarden_id=pet_kindergarden_id,
+            day_off_at=input_serializer.validated_data["day_off_at"],
+            user=request.user,
+        )
+        day_off_data = self.OutputSerializer(day_off).data
+        return Response(data=day_off_data, status=status.HTTP_201_CREATED)
+
+
+class ReservationDayOffDeleteAPI(APIAuthMixin, APIView):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._day_off_service = ReservationContainer.day_off_service()
+
+    def delete(self, request: Request, pet_kindergarden_id: int, day_off_id: int) -> Response:
+        self._day_off_service.delete_day_off(
+            pet_kindergarden_id=pet_kindergarden_id,
+            day_off_id=day_off_id,
+            user=request.user,
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

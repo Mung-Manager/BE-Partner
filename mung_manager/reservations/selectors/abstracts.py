@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from django.db.models.query import QuerySet
 
@@ -26,6 +27,16 @@ class AbstractDayOffSelector(ABC):
     def get_day_off_queryset_by_pet_kindergarden_id_and_day_off_at(
         self, pet_kindergarden_id: int, year: int, month: int
     ) -> QuerySet[DayOff]:
+        pass
+
+    @abstractmethod
+    def get_day_off_by_id(self, day_off_id: int) -> Optional[DayOff]:
+        pass
+
+    @abstractmethod
+    def check_is_exists_day_off_by_day_off_at_and_pet_kindergarden_id(
+        self, day_off_at: str, pet_kindergarden_id: int
+    ) -> bool:
         pass
 
 

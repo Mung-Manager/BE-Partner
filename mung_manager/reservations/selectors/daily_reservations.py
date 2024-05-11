@@ -7,6 +7,8 @@ from mung_manager.reservations.selectors.abstracts import (
 
 
 class DailyReservationSelector(AbstractDailyReservationSelector):
+    """이 클래스는 일별 예약을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
+
     def get_daily_reservations_queryset_by_year_and_month_and_pet_kindergarden_id(
         self, year: int, month: int, pet_kindergarden_id: int
     ) -> QuerySet[DailyReservation]:

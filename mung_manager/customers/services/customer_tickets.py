@@ -18,7 +18,7 @@ from mung_manager.tickets.selectors.tickets import TicketSelector
 
 
 class CustomerTicketService(AbstractCustomerTicketService):
-    """이 클래스는 고객의 티켓을 데이터베이스에서 PUSH하는 비즈니스 로직을 담당합니다."""
+    """이 클래스는 고객의 티켓을 Db에서 PUSH하는 비즈니스 로직을 담당합니다."""
 
     def __init__(
         self,

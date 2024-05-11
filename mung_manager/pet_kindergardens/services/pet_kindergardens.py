@@ -13,19 +13,19 @@ from mung_manager.pet_kindergardens.models import PetKindergarden
 from mung_manager.pet_kindergardens.selectors.pet_kindergardens import (
     PetKindergardenSelector,
 )
+from mung_manager.pet_kindergardens.services.abstracts import (
+    AbstractPetKindergardenService,
+)
 
 
-class PetKindergardenService:
-    """
-    이 클래스는 반려동물 유치원를 데이터베이스에 PUSH하는 비즈니스 로직을 담당합니다.
-    """
+class PetKindergardenService(AbstractPetKindergardenService):
+    """이 클래스는 반려동물 유치원를 DB에 PUSH하는 비즈니스 로직을 담당합니다."""
 
     def __init__(self, pet_kindergarden_selector: PetKindergardenSelector):
         self._pet_kindergarden_selector = pet_kindergarden_selector
 
     def _get_coordinates_by_road_address(self, road_address: str) -> Tuple[float, float]:
-        """
-        이 함수는 도로명 주소를 받아 위도, 경도를 얻어옵니다.
+        """이 함수는 도로명 주소를 받아 위도, 경도를 얻어옵니다.
 
         Args:
             road_address (str): 도로명 주소
@@ -76,8 +76,7 @@ class PetKindergardenService:
         daily_pet_limit: int,
         main_thumbnail_url: str,
     ) -> PetKindergarden:
-        """
-        이 함수는 반려동물 유치원 데이터를 받아 반려동물 유치원을 생성합니다.
+        """이 함수는 반려동물 유치원 데이터를 받아 반려동물 유치원을 생성합니다.
 
         Args:
             user (User): 유저 객체
