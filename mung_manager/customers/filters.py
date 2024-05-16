@@ -11,14 +11,12 @@ class CustomerFilter(django_filters.FilterSet):
         customer_phone_number (django_filters.CharFilter): 고객 전화번호 필터
         customer_pet_name (django_filters.CharFilter): 고객 반려동물 이름 필터
         is_active (django_filters.BooleanFilter): 고객 활성화 여부 필터
-        ticket_id (django_filters.NumberFilter): 티켓 아이디 필터
     """
 
     customer_name = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
     customer_phone_number = django_filters.CharFilter(field_name="phone_number", lookup_expr="icontains")
     customer_pet_name = django_filters.CharFilter(field_name="customer_pets__name", lookup_expr="icontains")
     is_active = django_filters.BooleanFilter(field_name="is_active")
-    ticket_id = django_filters.NumberFilter(field_name="customer_tickets__ticket_id")
 
     class Meta:
         model = Customer
@@ -27,5 +25,4 @@ class CustomerFilter(django_filters.FilterSet):
             "customer_phone_number",
             "customer_pet_name",
             "is_active",
-            "ticket_id",
         ]

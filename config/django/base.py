@@ -121,7 +121,11 @@ USE_TZ = True  # 장고 시간대 사용 여부
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("mung_manager.apis.render.CamelCaseJSONRenderer",),
-    "DEFAULT_PARSER_CLASSES": ("djangorestframework_camel_case.parser.CamelCaseJSONParser",),
+    "DEFAULT_PARSER_CLASSES": (
+        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
+        "djangorestframework_camel_case.parser.CamelCaseFormParser",
+        "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
+    ),
     "EXCEPTION_HANDLER": "mung_manager.errors.exception_handler.default_exception_handler",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),

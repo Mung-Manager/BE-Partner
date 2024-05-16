@@ -1,3 +1,4 @@
+import uuid
 from typing import Type
 
 from rest_framework import serializers
@@ -32,7 +33,7 @@ def inline_serializer(*, fields: dict, data: dict | None = None, **kwargs) -> se
         ...     )
 
     """
-    serializer_class = create_serializer_class(name="inline_serializer", fields=fields)
+    serializer_class = create_serializer_class(name=uuid.uuid4().hex, fields=fields)
     if data is not None:
         return serializer_class(data=data, **kwargs)
 

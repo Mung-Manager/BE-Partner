@@ -19,6 +19,7 @@ from mung_manager.pet_kindergardens.apis.reservations.api_managers import (
     ReservationCalendarListAPIManager,
     ReservationDayOffDetailAPIManager,
     ReservationDayOffListAPIManager,
+    ReservationListAPIManager,
 )
 from mung_manager.pet_kindergardens.apis.tickets.api_managers import (
     TicketDetailManagerAPI,
@@ -113,6 +114,11 @@ pet_kindergarden_reservation_urls = [
         "/<int:pet_kindergarden_id>/reservations/day-off/<int:day_off_id>",
         ReservationDayOffDetailAPIManager.as_view(),
         name="pet-kindergarden-reservations-day-off-detail",
+    ),
+    path(
+        "/<int:pet_kindergarden_id>/reservations",
+        ReservationListAPIManager.as_view(),
+        name="pet-kindergarden-reservations-day-off-detail-toggle-is-active",
     ),
 ]
 

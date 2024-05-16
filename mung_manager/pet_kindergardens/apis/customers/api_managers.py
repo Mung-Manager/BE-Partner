@@ -1,7 +1,7 @@
+from djangorestframework_camel_case.parser import CamelCaseMultiPartParser
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser
 
 from mung_manager.common.base.api_managers import BaseAPIManager
 from mung_manager.pet_kindergardens.apis.customers.apis import (
@@ -138,7 +138,7 @@ class CustomerListAPIManager(BaseAPIManager):
 
 
 class CustomerBatchRegisterAPIManager(BaseAPIManager):
-    parser_classes = (MultiPartParser,)
+    parser_classes = [CamelCaseMultiPartParser]
 
     VIEWS_BY_METHOD = {
         "POST": CustomerBatchRegisterAPI.as_view,

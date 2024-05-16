@@ -1,6 +1,5 @@
 from django.utils import timezone
 from rest_framework import serializers, status
-from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,7 +27,6 @@ class CustomerListAPI(APIAuthMixin, APIView):
         customer_name = serializers.CharField(required=False, help_text="이름")
         customer_phone_number = serializers.CharField(required=False, help_text="고객 전화번호")
         customer_pet_name = serializers.CharField(required=False, help_text="반려동물 이름")
-        ticket_id = serializers.IntegerField(required=False, help_text="티켓 아이디")
         is_active = serializers.BooleanField(required=True, help_text="활성화 여부")
         limit = serializers.IntegerField(
             default=10,
@@ -149,8 +147,6 @@ class CustomerCreateAPI(APIAuthMixin, APIView):
 
 
 class CustomerBatchRegisterAPI(APIAuthMixin, APIView):
-    parser_classes = (MultiPartParser,)
-
     class InputSerializer(BaseSerializer):
         csv_file = serializers.FileField(required=True, label="CSV 파일")
 
@@ -172,10 +168,12 @@ class CustomerBatchRegisterAPI(APIAuthMixin, APIView):
         self._customer_service = CustomerContainer.customer_service()
 
     def post(self, request: Request, pet_kindergarden_id: int) -> Response:
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
         customers = self._customer_service.create_customers_by_csv(
             pet_kindergarden_id=pet_kindergarden_id,
             user=request.user,
-            csv_file=request.FILES.get("csv_file"),
+            csv_file=input_serializer.validated_data["csv_file"],
         )
         customers_data = self.OutputSerializer(customers, many=True).data
         return Response(data=customers_data, status=status.HTTP_201_CREATED)
