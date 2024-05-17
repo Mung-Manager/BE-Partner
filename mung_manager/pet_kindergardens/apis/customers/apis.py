@@ -54,16 +54,13 @@ class CustomerListAPI(APIAuthMixin, APIView):
             many=True,
             fields={
                 "id": serializers.IntegerField(label="티켓 아이디"),
-                "total_count": serializers.IntegerField(label="총 사용 가능 횟수"),
-                "used_count": serializers.IntegerField(label="사용 횟수"),
+                "total_count": serializers.IntegerField(label="총 횟수"),
+                "used_count": serializers.IntegerField(label="사용된 횟수"),
                 "ticket": inline_serializer(
                     label="티켓 정보",
                     fields={
-                        "id": serializers.IntegerField(label="티켓 아이디"),
                         "ticket_type": serializers.CharField(label="티켓 타입"),
-                        "usage_count": serializers.IntegerField(label="사용 가능 횟수"),
                         "usage_time_count": serializers.IntegerField(label="사용 가능 시간"),
-                        "usage_period_in_days_count": serializers.IntegerField(label="사용 가능 일수"),
                     },
                 ),
             },
