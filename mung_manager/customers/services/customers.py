@@ -121,15 +121,8 @@ class CustomerService(AbstractCustomerService):
 
         # CSV 파일을 읽어서 고객 객체를 생성
         for idx, row in islice(enumerate(reader), 3, None):
-            # csv 파일의 row가 비어있는지 검증
-            if any(cell.strip() == "" for cell in row):
-                raise ValidationException(
-                    detail=SYSTEM_CODE.message("EMPTY_CSV_FILE"),
-                    code=SYSTEM_CODE.code("EMPTY_CSV_FILE"),
-                )
-
             # row 데이터 추출
-            name, phone_number, pet_data = map(str.strip, row)
+            name, phone_number, pet_data = map(str.strip, row[:3])
 
             # 전화번호 유효성 검사
             phone_number_validator(phone_number)

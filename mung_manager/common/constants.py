@@ -79,7 +79,6 @@ class SYSTEM_CODE:
     # File code
     MAX_FILE_SIZE = ("validation_failed", "File is too large. Max File Size")
     INVALID_FILE_TYPE = ("validation_failed", "Invalid file type")
-    EMPTY_CSV_FILE = ("validation_failed", "Csv file row is empty.")
     DUPLICATE_PHONE_NUMBER_CSV_FILE = (
         "validation_failed",
         "Csv file phone number is duplicated.",
