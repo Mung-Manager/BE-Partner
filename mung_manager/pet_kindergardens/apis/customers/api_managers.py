@@ -35,7 +35,6 @@ from mung_manager.schemas.errors.commons import (
 )
 from mung_manager.schemas.errors.customers import (
     ErrorCustomerAlreadyExistsSchema,
-    ErrorCustomerCsvFileEmptySchema,
     ErrorCustomerCsvPhoneNumberDuplicatedSchema,
     ErrorCustomerNotFoundSchema,
     ErrorCustomerPetAlreadyExistsSchema,
@@ -164,7 +163,6 @@ class CustomerBatchRegisterAPIManager(BaseAPIManager):
             # 400
             ErrorInvalidParameterFormatSchema,
             ErrorCustomerCsvPhoneNumberDuplicatedSchema,
-            ErrorCustomerCsvFileEmptySchema,
             ErrorCustomerPetNameDuplicatedSchema,
             ErrorPhoneNumberInvalidSchema,
             ErrorCustomerAlreadyExistsSchema,

@@ -34,23 +34,6 @@ ErrorCustomerAlreadyExistsSchema = OpenApiExample(
     response_only=True,
 )
 
-ErrorCustomerCsvFileEmptySchema = OpenApiExample(
-    name="400(csv_file_empty)",
-    summary="[Validation Failed]: CSV File Empty",
-    description="""
-    CSV 파일이 비어있을 때 반환되는 응답입니다.
-    """,
-    value={
-        "success": False,
-        "statusCode": 400,
-        "code": "validation_failed",
-        "message": "CSV file is empty.",
-        "data": {},
-    },
-    status_codes=["400"],
-    response_only=True,
-)
-
 ErrorCustomerCsvPhoneNumberDuplicatedSchema = OpenApiExample(
     name="400(csv_phone_number_duplicated)",
     summary="[Validation Failed]: CSV Phone Number Duplicated",
