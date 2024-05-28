@@ -21,12 +21,7 @@ def default_exception_handler(exc: Exception, context: dict) -> Response:
         Response: 예외 처리 결과로 생성된 Response 객체
     """
     # 로그 출력
-    logger.error("[EXCEPTION_HANDLER]")
-    logger.error(f"[{datetime.now()}]")
-    logger.error("> exc")
-    logger.error(f"{exc}")
-    logger.error("> context")
-    logger.error(f"{context}")
+    logger.error(f"[EXCEPTION_HANDLER]\n" f"[{datetime.now()}]\n" f"> exc\n" f"{exc}\n" f"> context\n" f"{context}")
 
     # 익셉션 핸들러를 통해 API 예외 처리를 시도
     # rest_framework에서 제공하는 APIException을 상속받은 예외를 처리하기 위해
