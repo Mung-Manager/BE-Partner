@@ -30,6 +30,8 @@ LOCAL_APPS = [
 THIRD_PARTY_APPS = [
     "corsheaders",
     "rest_framework",
+    "django_celery_results",
+    "django_celery_beat",
 ]
 
 INSTALLED_APPS = [
@@ -134,12 +136,14 @@ REST_FRAMEWORK = {
 
 
 from config.settings.cors import *  # noqa
-from config.settings.debug_toolbar.settings import *  # noqa
-from config.settings.debug_toolbar.setup import DebugToolbarSetup  # noqa
 from config.settings.files_and_storages import *  # noqa
+from config.settings.sentry import *  # noqa
 from config.settings.jwt import *  # noqa
 from config.settings.logging import *  # noqa
 from config.settings.oauth import *  # noqa
+
+from config.settings.debug_toolbar.settings import *  # noqa
+from config.settings.debug_toolbar.setup import DebugToolbarSetup  # noqa
 from config.settings.swagger.settings import *  # noqa
 from config.settings.swagger.setup import SwaggerSetup  # noqa
 

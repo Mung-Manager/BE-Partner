@@ -29,15 +29,6 @@ LOGGING = {
             "filters": ["require_debug_true"],
             "formatter": "django.server",
         },
-        "file": {
-            "level": "INFO",
-            "filters": ["require_debug_false"],
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": "app.log",
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "django.server",
-        },
     },
 }
 
@@ -47,14 +38,6 @@ if SERVER_ENV == "config.django.local":
         "django.db.backends": {
             "handlers": ["console"],
             "level": "DEBUG",
-            "propagate": False,
-        },
-    }
-else:
-    LOGGING["loggers"] = {
-        "django": {
-            "handlers": ["file"],
-            "level": "INFO",
             "propagate": False,
         },
     }
