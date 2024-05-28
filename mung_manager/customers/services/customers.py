@@ -124,30 +124,32 @@ class CustomerService(AbstractCustomerService):
             # row 데이터 추출
             name, phone_number, pet_data = map(str.strip, row[:3])
 
-            # 전화번호 유효성 검사
-            phone_number_validator(phone_number)
+            # 이름, 전화번호, 반려동물 빈 값 검사
+            if all(value for value in [name, phone_number, pet_data]):
+                # 전화번호 유효성 검사
+                phone_number_validator(phone_number)
 
-            # 반려동물 이름 중복 검사
-            unique_pet_name_validator(pet_data.split(","))
+                # 반려동물 이름 중복 검사
+                unique_pet_name_validator(pet_data.split(","))
 
-            # csv 파일에 동일한 전화번호가 존재하는지 검증
-            if phone_number in [customer.phone_number for customer in customer_instances]:
-                raise ValidationException(
-                    detail=SYSTEM_CODE.message("DUPLICATE_PHONE_NUMBER_CSV_FILE"),
-                    code=SYSTEM_CODE.code("DUPLICATE_PHONE_NUMBER_CSV_FILE"),
+                # csv 파일에 동일한 전화번호가 존재하는지 검증
+                if phone_number in [customer.phone_number for customer in customer_instances]:
+                    raise ValidationException(
+                        detail=SYSTEM_CODE.message("DUPLICATE_PHONE_NUMBER_CSV_FILE"),
+                        code=SYSTEM_CODE.code("DUPLICATE_PHONE_NUMBER_CSV_FILE"),
+                    )
+
+                # 고객 인스턴스 생성
+                customer = Customer(
+                    pet_kindergarden_id=pet_kindergarden_id,
+                    name=name,
+                    phone_number=phone_number,
                 )
+                customer_instances.append(customer)
 
-            # 고객 인스턴스 생성
-            customer = Customer(
-                pet_kindergarden_id=pet_kindergarden_id,
-                name=name,
-                phone_number=phone_number,
-            )
-            customer_instances.append(customer)
-
-            # 고객 반려동물 인스턴스 생성
-            pets = [pet.strip() for pet in pet_data.split(",")]
-            pet_instances.extend(CustomerPet(name=pet, customer=customer) for pet in pets)
+                # 고객 반려동물 인스턴스 생성
+                pets = [pet.strip() for pet in pet_data.split(",")]
+                pet_instances.extend(CustomerPet(name=pet, customer=customer) for pet in pets)
 
         # csv 파일 닫기
         csv_file.close()
