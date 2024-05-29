@@ -39,7 +39,7 @@ class DayOffService(AbstractDayOffService):
         """
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
@@ -73,7 +73,7 @@ class DayOffService(AbstractDayOffService):
         """
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),

@@ -80,7 +80,7 @@ class CustomerListAPI(APIAuthMixin, APIView):
         filter_serializer.is_valid(raise_exception=True)
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
@@ -206,7 +206,7 @@ class CustomerDetailAPI(APIAuthMixin, APIView):
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
@@ -317,7 +317,7 @@ class CustomerTicketActiveListAPI(APIAuthMixin, APIView):
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
@@ -370,7 +370,7 @@ class CustomerTicketListAPI(APIAuthMixin, APIView):
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
@@ -464,7 +464,7 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
             self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
-                pet_kindergarten_id=pet_kindergarden_id,
+                pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),

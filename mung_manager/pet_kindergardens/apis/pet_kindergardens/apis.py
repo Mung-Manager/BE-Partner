@@ -116,6 +116,140 @@ class PetKindergardenCreateAPI(APIAuthMixin, APIView):
         return Response(data=pet_kindergarden_data, status=status.HTTP_201_CREATED)
 
 
+class PetKindergardenUpdateAPI(APIAuthMixin, APIView):
+    class InputSerializer(BaseSerializer):
+        name = serializers.CharField(required=False, max_length=64, label="반려동물 유치원 이름")
+        main_thumbnail_url = serializers.URLField(
+            required=False,
+            default="https://s3.ap-northeast-2.amazonaws.com/dev-api.mung-manager.com/default_profile_image.png",
+            label="메인 이미지 URL",
+            allow_blank=True,
+        )
+        profile_thumbnail_url = serializers.URLField(
+            required=False,
+            default="https://s3.ap-northeast-2.amazonaws.com/dev-api.mung-manager.com/default_profile_image.png",
+            label="프로필 이미지 URL",
+            allow_blank=True,
+        )
+        phone_number = serializers.CharField(
+            required=False,
+            allow_blank=True,
+            max_length=16,
+            label="전화번호",
+        )
+        visible_phone_number = serializers.ListField(
+            required=False,
+            child=serializers.CharField(
+                max_length=16,
+            ),
+            max_length=2,
+            label="노출 전화번호",
+        )
+        business_start_hour = serializers.TimeField(required=False, label="영업 시작 시간")
+        business_end_hour = serializers.TimeField(required=False, label="영업 종료 시간")
+        road_address = serializers.CharField(required=False, max_length=128, label="도로명 주소")
+        abbr_address = serializers.CharField(required=False, max_length=128, label="지번 주소")
+        detail_address = serializers.CharField(
+            required=False,
+            max_length=128,
+            allow_blank=True,
+            label="상세 주소",
+        )
+        short_address = serializers.ListField(
+            required=False,
+            child=serializers.CharField(max_length=128),
+            max_length=10,
+            label="간단 주소",
+        )
+        guide_message = serializers.CharField(required=False, allow_blank=True, label="안내 메시지")
+        reservation_availability_option = serializers.ChoiceField(
+            required=False,
+            choices=[options.value for options in ReservationAvailabilityOption],
+            label="예약 가능 설정",
+        )
+        reservation_change_option = serializers.ChoiceField(
+            required=False,
+            choices=[options.value for options in ReservationChangeOption],
+            label="예약 변경 옵션",
+        )
+        daily_pet_limit = serializers.IntegerField(
+            required=False,
+            min_value=-1,
+            max_value=9999,
+            label="일일 펫 제한",
+            help_text="-1인 경우 전체",
+        )
+
+    class OutputSerializer(BaseSerializer):
+        id = serializers.IntegerField(label="반려동물 유치원 아이디")
+        name = serializers.CharField(label="반려동물 유치원 이름")
+        main_thumbnail_url = serializers.URLField(label="메인 이미지 URL")
+        profile_thumbnail_url = serializers.URLField(label="프로필 이미지 URL")
+        phone_number = serializers.CharField(label="전화번호")
+        visible_phone_number = serializers.ListField(child=serializers.CharField(), label="노출 전화번호")
+        business_start_hour = serializers.TimeField(label="영업 시작 시간")
+        business_end_hour = serializers.TimeField(label="영업 종료 시간")
+        road_address = serializers.CharField(label="도로명 주소")
+        abbr_address = serializers.CharField(label="지번 주소")
+        detail_address = serializers.CharField(label="상세 주소")
+        short_address = serializers.ListField(child=serializers.CharField(), label="간단 주소")
+        guide_message = serializers.CharField(label="안내 메시지")
+        reservation_availability_option = serializers.CharField(label="예약 가능 설정")
+        reservation_change_option = serializers.CharField(label="예약 변경 옵션")
+        daily_pet_limit = serializers.IntegerField(label="일일 펫 제한")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._pet_kindergarden_service = PetKindergardenContainer.pet_kindergarden_service()
+
+    def put(self, request: Request, pet_kindergarden_id: int) -> Response:
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        pet_kindergarden = self._pet_kindergarden_service.update_pet_kindergarden(
+            user=request.user, pet_kindergarden_id=pet_kindergarden_id, **input_serializer.validated_data
+        )
+
+        pet_kindergarden_data = self.OutputSerializer(pet_kindergarden).data
+        return Response(data=pet_kindergarden_data, status=status.HTTP_200_OK)
+
+
+class PetKindergardenDetailAPI(APIAuthMixin, APIView):
+    class OutputSerializer(BaseSerializer):
+        id = serializers.IntegerField(label="반려동물 유치원 아이디")
+        name = serializers.CharField(label="반려동물 유치원 이름")
+        main_thumbnail_url = serializers.URLField(label="메인 이미지 URL")
+        profile_thumbnail_url = serializers.URLField(label="프로필 이미지 URL")
+        phone_number = serializers.CharField(label="전화번호")
+        visible_phone_number = serializers.ListField(child=serializers.CharField(), label="노출 전화번호")
+        business_start_hour = serializers.TimeField(label="영업 시작 시간")
+        business_end_hour = serializers.TimeField(label="영업 종료 시간")
+        road_address = serializers.CharField(label="도로명 주소")
+        abbr_address = serializers.CharField(label="지번 주소")
+        detail_address = serializers.CharField(label="상세 주소")
+        short_address = serializers.ListField(child=serializers.CharField(), label="간단 주소")
+        guide_message = serializers.CharField(label="안내 메시지")
+        reservation_availability_option = serializers.CharField(label="예약 가능 설정")
+        reservation_change_option = serializers.CharField(label="예약 변경 옵션")
+        daily_pet_limit = serializers.IntegerField(label="일일 펫 제한")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+
+    def get(self, request: Request, pet_kindergarden_id: int) -> Response:
+        pet_kindergarden = get_object_or_not_found(
+            self._pet_kindergarden_selector.get_pet_kindergarden_by_id_and_user(
+                pet_kindergarden_id=pet_kindergarden_id,
+                user=request.user,
+            ),
+            msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
+            code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
+        )
+        pet_kindergarden_data = self.OutputSerializer(pet_kindergarden).data
+        return Response(data=pet_kindergarden_data, status=status.HTTP_200_OK)
+
+
 class PetKindergardenSearchAPI(APIAuthMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10

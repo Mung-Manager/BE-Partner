@@ -16,7 +16,11 @@ class AbstractPetKindergardenSelector(ABC):
         pass
 
     @abstractmethod
-    def check_is_exists_pet_kindergarden_by_id_and_user(self, pet_kindergarten_id: int, user) -> bool:
+    def check_is_exists_pet_kindergarden_by_id_and_user(self, pet_kindergarden_id: int, user) -> bool:
+        pass
+
+    @abstractmethod
+    def get_pet_kindergarden_by_id_and_user(self, pet_kindergarden_id: int, user) -> Optional[PetKindergarden]:
         pass
 
 

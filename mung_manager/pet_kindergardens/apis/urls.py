@@ -11,6 +11,7 @@ from mung_manager.pet_kindergardens.apis.customers.api_managers import (
     CustomerToggleActiveAPIManager,
 )
 from mung_manager.pet_kindergardens.apis.pet_kindergardens.api_managers import (
+    PetkindergardenDetailAPIManager,
     PetkindergardenListAPIManager,
     PetkindergardenProfileAPIManager,
     PetkindergardenSearchAPIManager,
@@ -31,6 +32,11 @@ pet_kindergarden_urls = [
         "",
         PetkindergardenListAPIManager.as_view(),
         name="pet-kindergarden-list",
+    ),
+    path(
+        "/<int:pet_kindergarden_id>",
+        PetkindergardenDetailAPIManager.as_view(),
+        name="pet-kindergarden-detail",
     ),
     path(
         "/search",

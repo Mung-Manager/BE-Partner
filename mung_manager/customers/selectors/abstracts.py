@@ -30,12 +30,12 @@ class AbstractCustomerSelector(ABC):
 
     @abstractmethod
     def check_is_exists_customer_by_pet_kindergarden_id_and_phone_number(
-        self, pet_kindergarten_id: int, phone_number: str
+        self, pet_kindergarden_id: int, phone_number: str
     ) -> bool:
         pass
 
     @abstractmethod
-    def get_customer_queryset_by_pet_kindergarden_id(self, pet_kindergarten_id: int) -> QuerySet[Customer]:
+    def get_customer_queryset_by_pet_kindergarden_id(self, pet_kindergarden_id: int) -> QuerySet[Customer]:
         pass
 
 
