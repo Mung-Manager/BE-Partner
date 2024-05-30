@@ -75,7 +75,7 @@ class LimitOffsetPagination(_LimitOffsetPagination):
                 "count": {"type": "integer", "name": "전체 데이터 개수"},
                 "next": {"type": "string", "name": "다음 페이지의 URL"},
                 "previous": {"type": "string", "name": "이전 페이지의 URL"},
-                "results": schema,
+                "results": {"type": "array", "items": schema, "description": "검색 결과 리스트"},
             },
         }
 
@@ -118,7 +118,7 @@ class CursorPagination(_CursorPagination):
                     "type": "string",
                     "name": "이전 페이지의 cursor URL",
                 },
-                "results": schema,
+                "results": {"type": "array", "items": schema, "description": "검색 결과 리스트"},
             },
         }
 
@@ -161,6 +161,6 @@ class PageNumberPagination(_PageNumberPagination):
                 "count": {"type": "integer", "name": "전체 데이터 개수"},
                 "next": {"type": "string", "name": "다음 페이지의 URL"},
                 "previous": {"type": "string", "name": "이전 페이지의 URL"},
-                "results": schema,
+                "results": {"type": "array", "items": schema, "description": "검색 결과 리스트"},
             },
         }
