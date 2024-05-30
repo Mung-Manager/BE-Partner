@@ -1,5 +1,6 @@
 from typing import List
 
+from django.db.models import Q
 from django.db.models.query import QuerySet
 
 from mung_manager.customers.models import CustomerPet
@@ -45,3 +46,24 @@ class CustomerPetSelector(AbstractCustomerPetSelector):
             is_deleted=False,
             deleted_at__isnull=True,
         ).exists()
+
+    def get_customer_pet_list_by_keyword_for_reservation(self, keyword: str) -> QuerySet[CustomerPet]:
+        """이 함수는 키워드로 고객을 포함한 삭제되지 않은 고객 반려동물 조회합니다.
+        키워드는 고객 이름, 고객 전화번호, 고객 반려동물 이름을 검색합니다.
+
+        Args:
+            keyword (str): 검색 키워드
+
+        Returns:
+            QuerySet[Customer]: 고객 리스트 쿼리셋이며 존재하지 않으면 빈 쿼리셋을 반환
+        """
+        return (
+            CustomerPet.objects.filter(is_deleted=False, deleted_at__isnull=True)
+            .filter(
+                Q(customer__name__icontains=keyword)
+                | Q(customer__phone_number__icontains=keyword)
+                | Q(name__icontains=keyword)
+            )
+            .filter(customer__is_active=True)
+            .select_related("customer")
+        )

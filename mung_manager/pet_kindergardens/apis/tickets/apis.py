@@ -7,7 +7,6 @@ from mung_manager.apis.mixins import APIAuthMixin
 from mung_manager.common.base.serializers import BaseSerializer
 from mung_manager.common.constants import SYSTEM_CODE
 from mung_manager.common.selectors import check_object_or_not_found
-from mung_manager.pet_kindergardens.containers import PetKindergardenContainer
 from mung_manager.tickets.containers import TicketContainer
 from mung_manager.tickets.enums import TicketType
 
@@ -24,7 +23,7 @@ class TicketListAPI(APIAuthMixin, APIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+        self._pet_kindergarden_selector = TicketContainer.pet_kindergarden_selector()
         self._ticket_selector = TicketContainer.ticket_selector()
 
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:

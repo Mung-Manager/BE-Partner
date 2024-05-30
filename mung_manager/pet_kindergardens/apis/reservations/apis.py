@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from mung_manager.apis.mixins import APIAuthMixin
+from mung_manager.apis.pagination import CursorPagination, get_paginated_data
 from mung_manager.common.base.serializers import BaseSerializer
 from mung_manager.common.constants import SYSTEM_CODE
 from mung_manager.common.fields import DateFromDateTimeField, TimeFromDateTimeField
@@ -248,3 +249,58 @@ class ReservationToggleAttendanceAPI(APIAuthMixin, APIView):
         )
         reservation_data = self.OutputSerializer(reservation).data
         return Response(data=reservation_data, status=status.HTTP_200_OK)
+
+
+class ReservationCustomerPetListAPI(APIAuthMixin, APIView):
+    class Pagination(CursorPagination):
+        page_size = 10
+
+    class FilterSerializer(BaseSerializer):
+        cursor = serializers.CharField(required=False, help_text="커서")
+        page_size = serializers.IntegerField(
+            required=False,
+            help_text="페이지 크기",
+            min_value=1,
+            max_value=100,
+            default=10,
+        )
+        keyword = serializers.CharField(required=True, help_text="검색어[고객 이름, 휴대폰 번호, 반려동물 이름]")
+
+    class OutputSerializer(BaseSerializer):
+        id = serializers.IntegerField(label="고객 반려동물 아이디")
+        name = serializers.CharField(label="고객 반려동물 이름")
+        customer = inline_serializer(
+            label="고객 정보",
+            fields={
+                "id": serializers.IntegerField(label="고객 아이디"),
+                "name": serializers.CharField(label="고객 이름"),
+            },
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._customer_pet_selector = ReservationContainer.customer_pet_selector()
+        self._pet_kindergarden_selector = ReservationContainer.pet_kindergarden_selector()
+
+    def get(self, request: Request, pet_kindergarden_id: int) -> Response:
+        filter_serializer = self.FilterSerializer(data=request.query_params)
+        filter_serializer.is_valid(raise_exception=True)
+        check_object_or_not_found(
+            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+                pet_kindergarden_id=pet_kindergarden_id,
+                user=request.user,
+            ),
+            msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
+            code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
+        )
+        customer_pets = self._customer_pet_selector.get_customer_pet_list_by_keyword_for_reservation(
+            keyword=filter_serializer.validated_data["keyword"],
+        )
+        pagination_customer_pets_data = get_paginated_data(
+            pagination_class=self.Pagination,
+            serializer_class=self.OutputSerializer,
+            queryset=customer_pets,
+            request=request,
+            view=self,
+        )
+        return Response(data=pagination_customer_pets_data, status=status.HTTP_200_OK)

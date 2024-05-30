@@ -15,7 +15,6 @@ from mung_manager.common.selectors import (
 from mung_manager.common.utils import inline_serializer
 from mung_manager.common.validators import PhoneNumberValidator, UniquePetNameValidator
 from mung_manager.customers.containers import CustomerContainer
-from mung_manager.pet_kindergardens.containers import PetKindergardenContainer
 from mung_manager.tickets.containers import TicketContainer
 
 
@@ -72,7 +71,7 @@ class CustomerListAPI(APIAuthMixin, APIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+        self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._customer_selector = CustomerContainer.customer_selector()
 
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:
@@ -200,7 +199,7 @@ class CustomerDetailAPI(APIAuthMixin, APIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+        self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._customer_selector = CustomerContainer.customer_selector()
 
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
@@ -311,7 +310,7 @@ class CustomerTicketActiveListAPI(APIAuthMixin, APIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+        self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._ticket_selector = TicketContainer.ticket_selector()
 
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:
@@ -363,7 +362,7 @@ class CustomerTicketListAPI(APIAuthMixin, APIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+        self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._customer_selector = CustomerContainer.customer_selector()
         self._customer_ticket_selector = CustomerContainer.customer_ticket_selector()
 
@@ -457,7 +456,7 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._pet_kindergarden_selector = PetKindergardenContainer.pet_kindergarden_selector()
+        self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._customer_selector = CustomerContainer.customer_selector()
         self._customer_ticket_reservation_selector = CustomerContainer.customer_ticket_reservation_selector()
 

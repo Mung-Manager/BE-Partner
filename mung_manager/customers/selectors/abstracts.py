@@ -65,3 +65,7 @@ class AbstractCustomerPetSelector(ABC):
         self, names: List[str], customer_id: int
     ) -> bool:
         pass
+
+    @abstractmethod
+    def get_customer_pet_list_by_keyword_for_reservation(self, keyword: str) -> QuerySet[CustomerPet]:
+        pass

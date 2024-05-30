@@ -18,6 +18,7 @@ from mung_manager.pet_kindergardens.apis.pet_kindergardens.api_managers import (
 )
 from mung_manager.pet_kindergardens.apis.reservations.api_managers import (
     ReservationCalendarListAPIManager,
+    ReservationCustomerPetListAPIManager,
     ReservationDayOffDetailAPIManager,
     ReservationDayOffListAPIManager,
     ReservationListAPIManager,
@@ -128,9 +129,14 @@ pet_kindergarden_reservation_urls = [
         name="pet-kindergarden-reservations-list",
     ),
     path(
-        "/<int:pet_kindergarden_id>/reservations/<int:reservation_id>/toggle-is_attended",
+        "/<int:pet_kindergarden_id>/reservations/<int:reservation_id>/toggle-is-attended",
         ReservationToggleAttendanceAPIManager.as_view(),
         name="pet-kindergarden-reservations-detail-toggle-is-attended",
+    ),
+    path(
+        "/<int:pet_kindergarden_id>/reservations/customers/pets",
+        ReservationCustomerPetListAPIManager.as_view(),
+        name="pet-kindergarden-reservations-customers-pets-list",
     ),
 ]
 
