@@ -113,6 +113,7 @@ class KoreaSpecialDay(TimeStampedModel):
     )
     name = models.CharField(max_length=64, db_comment="공휴일 이름")
     special_day_at = models.DateField(db_comment="공휴일 날짜")
+    is_holiday = models.BooleanField(db_comment="공휴일 여부", default=True)
 
     def __str__(self):
         return f"[{self.id}]: {self.name} - {self.special_day_at}"

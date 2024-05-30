@@ -69,6 +69,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, db_column='korea_special_day_id', db_comment='한국 공휴일 아이디', primary_key=True, serialize=False)),
                 ('name', models.CharField(db_comment='공휴일 이름', max_length=64)),
                 ('special_day_at', models.DateField(db_comment='공휴일 날짜')),
+                ('is_holiday', models.BooleanField(db_comment='공휴일 여부', default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
             ],
