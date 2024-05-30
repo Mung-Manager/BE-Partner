@@ -304,3 +304,56 @@ class ReservationCustomerPetListAPI(APIAuthMixin, APIView):
             view=self,
         )
         return Response(data=pagination_customer_pets_data, status=status.HTTP_200_OK)
+
+
+class ReservationCustomerTicketListAPI(APIAuthMixin, APIView):
+
+    class OutputSerializer(BaseSerializer):
+        time = inline_serializer(
+            label="시간권 예약",
+            many=True,
+            fields={
+                "id": serializers.IntegerField(label="고객 티켓 아이디"),
+                "expired_at": serializers.DateTimeField(label="만료 시간"),
+                "unused_count": serializers.IntegerField(label="사용 가능 횟수"),
+                "usage_time": serializers.IntegerField(label="사용 가능 시간", source="ticket.usage_time"),
+            },
+        )
+        all_day = inline_serializer(
+            label="종일권 예약",
+            many=True,
+            fields={
+                "id": serializers.IntegerField(label="고객 티켓 아이디"),
+                "expired_at": serializers.DateTimeField(label="만료 시간"),
+                "unused_count": serializers.IntegerField(label="사용 가능 횟수"),
+            },
+        )
+        hotel = inline_serializer(
+            label="호텔권 예약",
+            many=True,
+            fields={
+                "id": serializers.IntegerField(label="고객 티켓 아이디"),
+                "expired_at": serializers.DateTimeField(label="만료 시간"),
+                "unused_count": serializers.IntegerField(label="사용 가능 횟수"),
+            },
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._customer_ticket_selector = ReservationContainer.customer_ticket_selector()
+        self._pet_kindergarden_selector = ReservationContainer.pet_kindergarden_selector()
+
+    def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
+        check_object_or_not_found(
+            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+                pet_kindergarden_id=pet_kindergarden_id,
+                user=request.user,
+            ),
+            msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
+            code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
+        )
+        customer_tickets = self._customer_ticket_selector.get_customer_ticket_list_by_customer_id_for_reservation(
+            customer_id=customer_id,
+        )
+        customer_tickets_data = self.OutputSerializer(customer_tickets).data
+        return Response(data=customer_tickets_data, status=status.HTTP_200_OK)

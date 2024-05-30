@@ -19,6 +19,7 @@ from mung_manager.pet_kindergardens.apis.pet_kindergardens.api_managers import (
 from mung_manager.pet_kindergardens.apis.reservations.api_managers import (
     ReservationCalendarListAPIManager,
     ReservationCustomerPetListAPIManager,
+    ReservationCustomerTicketListAPIManager,
     ReservationDayOffDetailAPIManager,
     ReservationDayOffListAPIManager,
     ReservationListAPIManager,
@@ -137,6 +138,11 @@ pet_kindergarden_reservation_urls = [
         "/<int:pet_kindergarden_id>/reservations/customers/pets",
         ReservationCustomerPetListAPIManager.as_view(),
         name="pet-kindergarden-reservations-customers-pets-list",
+    ),
+    path(
+        "/<int:pet_kindergarden_id>/reservations/customers/<int:customer_id>/tickets",
+        ReservationCustomerTicketListAPIManager.as_view(),
+        name="pet-kindergarden-reservations-customers-tickets-list",
     ),
 ]
 

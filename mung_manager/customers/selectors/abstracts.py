@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, TypedDict
 
 from django.db.models.query import QuerySet
+from django_stubs_ext import WithAnnotations
 
 from mung_manager.customers.models import (
     Customer,
@@ -9,6 +10,10 @@ from mung_manager.customers.models import (
     CustomerTicket,
     CustomerTicketReservation,
 )
+
+
+class CustomerTicketAnnotation(TypedDict):
+    unused_count: int
 
 
 class AbstractCustomerSelector(ABC):
@@ -42,6 +47,12 @@ class AbstractCustomerSelector(ABC):
 class AbstractCustomerTicketSelector(ABC):
     @abstractmethod
     def get_customer_ticket_with_ticket_queryset_by_customer_id(self, customer_id: int) -> QuerySet[CustomerTicket]:
+        pass
+
+    @abstractmethod
+    def get_customer_ticket_list_by_customer_id_for_reservation(
+        self, customer_id: int
+    ) -> dict[str, list[WithAnnotations[CustomerTicket, CustomerTicketAnnotation]]]:
         pass
 
 
