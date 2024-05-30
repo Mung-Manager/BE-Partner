@@ -60,7 +60,7 @@ class CustomerListAPI(APIAuthMixin, APIView):
                     label="티켓 정보",
                     fields={
                         "ticket_type": serializers.CharField(label="티켓 타입"),
-                        "usage_time_count": serializers.IntegerField(label="사용 가능 시간"),
+                        "usage_time": serializers.IntegerField(label="사용 가능 시간"),
                     },
                 ),
             },
@@ -303,7 +303,7 @@ class CustomerUpdateAPI(APIAuthMixin, APIView):
 class CustomerTicketActiveListAPI(APIAuthMixin, APIView):
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time_count = serializers.IntegerField(label="사용 가능 시간")
+        usage_time = serializers.IntegerField(label="사용 가능 시간")
         usage_count = serializers.IntegerField(label="사용 가능 횟수")
         usage_period_in_days_count = serializers.IntegerField(label="사용 가능 일수")
         price = serializers.IntegerField(label="가격")
@@ -345,7 +345,7 @@ class CustomerTicketListAPI(APIAuthMixin, APIView):
 
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time_count = serializers.IntegerField(source="ticket.usage_time_count", label="사용 가능 시간")
+        usage_time = serializers.IntegerField(source="ticket.usage_time", label="사용 가능 시간")
         usage_count = serializers.IntegerField(source="ticket.usage_count", label="사용 가능 횟수")
         usage_period_in_days_count = serializers.IntegerField(
             source="ticket.usage_period_in_days_count", label="사용 가능 일수"
@@ -440,8 +440,8 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 로그 아이디")
         ticket_type = serializers.CharField(source="customer_ticket.ticket.ticket_type", label="티켓 타입")
-        usage_time_count = serializers.IntegerField(
-            source="customer_ticket.ticket.usage_time_count",
+        usage_time = serializers.IntegerField(
+            source="customer_ticket.ticket.usage_time",
             label="사용 가능 시간",
         )
         usage_count = serializers.IntegerField(source="customer_ticket.ticket.usage_count", label="사용 가능 횟수")

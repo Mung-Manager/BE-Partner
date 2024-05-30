@@ -15,7 +15,7 @@ from mung_manager.tickets.enums import TicketType
 class TicketListAPI(APIAuthMixin, APIView):
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time_count = serializers.IntegerField(label="사용 시간 횟수")
+        usage_time = serializers.IntegerField(label="사용 가능 시간")
         usage_count = serializers.IntegerField(label="사용 횟수")
         usage_period_in_days_count = serializers.IntegerField(label="사용 기간(일) 횟수")
         price = serializers.IntegerField(label="금액")
@@ -45,11 +45,11 @@ class TicketListAPI(APIAuthMixin, APIView):
 
 class TicketCreateAPI(APIAuthMixin, APIView):
     class InputSerializer(BaseSerializer):
-        usage_time_count = serializers.IntegerField(
+        usage_time = serializers.IntegerField(
             required=False,
             min_value=0,
             default=0,
-            label="사용 시간 횟수",
+            label="사용 가능 시간",
         )
         usage_count = serializers.IntegerField(required=True, min_value=1, label="사용 횟수")
         usage_period_in_days_count = serializers.IntegerField(required=True, min_value=1, label="사용 기간(일) 횟수")
@@ -58,7 +58,7 @@ class TicketCreateAPI(APIAuthMixin, APIView):
 
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time_count = serializers.IntegerField(label="사용 시간 횟수")
+        usage_time = serializers.IntegerField(label="사용 가능 시간")
         usage_count = serializers.IntegerField(label="사용 횟수")
         usage_period_in_days_count = serializers.IntegerField(label="사용 기간(일) 횟수")
         price = serializers.IntegerField(label="금액")

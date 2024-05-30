@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from mung_manager.apis.mixins import APIAuthMixin
 from mung_manager.common.base.serializers import BaseSerializer
 from mung_manager.common.constants import SYSTEM_CODE
+from mung_manager.common.fields import DateFromDateTimeField, TimeFromDateTimeField
 from mung_manager.common.selectors import check_object_or_not_found
 from mung_manager.common.utils import inline_serializer
 from mung_manager.reservations.containers import ReservationContainer
@@ -43,6 +44,7 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
                 "id": serializers.IntegerField(label="공휴일 아이디"),
                 "name": serializers.CharField(label="공휴일 이름"),
                 "special_day_at": serializers.DateField(label="공휴일 날짜"),
+                "is_holiday": serializers.BooleanField(label="공휴일 여부"),
             },
         )
 
@@ -132,8 +134,78 @@ class ReservationListAPI(APIAuthMixin, APIView):
         reserved_at = serializers.DateField(required=True, help_text="예약 날짜")
 
     class OutputSerializer(BaseSerializer):
-        id = serializers.IntegerField(label="예약 아이디")
-        is_attended = serializers.BooleanField(label="출석 여부")
+        time = inline_serializer(
+            label="시간권 예약",
+            many=True,
+            fields={
+                "id": serializers.IntegerField(label="예약 아이디"),
+                "is_attended": serializers.BooleanField(label="출석 여부"),
+                "reserved_time": TimeFromDateTimeField(label="예약 시간", source="reserved_at"),
+                "updated_reserved_time": TimeFromDateTimeField(label="예약 수정 시간", source="updated_reserved_at"),
+                "end_time": TimeFromDateTimeField(label="퇴실 시간", source="end_at"),
+                "customer": inline_serializer(
+                    label="고객 정보",
+                    fields={
+                        "id": serializers.IntegerField(label="고객 아이디"),
+                        "name": serializers.CharField(label="고객 이름"),
+                    },
+                ),
+                "customer_pet": inline_serializer(
+                    label="고객 반려동물 정보",
+                    fields={
+                        "id": serializers.IntegerField(label="고객 반려동물 아이디"),
+                        "name": serializers.CharField(label="고객 반려동물 이름"),
+                    },
+                ),
+            },
+        )
+        all_day = inline_serializer(
+            label="종일권 예약",
+            many=True,
+            fields={
+                "id": serializers.IntegerField(label="예약 아이디"),
+                "is_attended": serializers.BooleanField(label="출석 여부"),
+                "customer": inline_serializer(
+                    label="고객 정보",
+                    fields={
+                        "id": serializers.IntegerField(label="고객 아이디"),
+                        "name": serializers.CharField(label="고객 이름"),
+                    },
+                ),
+                "customer_pet": inline_serializer(
+                    label="고객 반려동물 정보",
+                    fields={
+                        "id": serializers.IntegerField(label="고객 반려동물 아이디"),
+                        "name": serializers.CharField(label="고객 반려동물 이름"),
+                    },
+                ),
+            },
+        )
+        hotel = inline_serializer(
+            label="호텔 예약",
+            many=True,
+            fields={
+                "id": serializers.IntegerField(label="예약 아이디"),
+                "is_attended": serializers.BooleanField(label="출석 여부"),
+                "reserved_at": DateFromDateTimeField(label="예약 날짜"),
+                "updated_reserved_at": DateFromDateTimeField(label="예약 수정 시간"),
+                "end_at": DateFromDateTimeField(label="퇴실 날짜"),
+                "customer": inline_serializer(
+                    label="고객 정보",
+                    fields={
+                        "id": serializers.IntegerField(label="고객 아이디"),
+                        "name": serializers.CharField(label="고객 이름"),
+                    },
+                ),
+                "customer_pet": inline_serializer(
+                    label="고객 반려동물 정보",
+                    fields={
+                        "id": serializers.IntegerField(label="고객 반려동물 아이디"),
+                        "name": serializers.CharField(label="고객 반려동물 이름"),
+                    },
+                ),
+            },
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -151,9 +223,9 @@ class ReservationListAPI(APIAuthMixin, APIView):
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        reservations = self._reservation_selector.get_reservations_list(
+        reservations = self._reservation_selector.get_reservation_list(
             pet_kindergarden_id=pet_kindergarden_id,
             reserved_at=filter_serializer.validated_data["reserved_at"],
         )
-        reservations_data = self.OutputSerializer({"reservations": reservations}).data
+        reservations_data = self.OutputSerializer(reservations).data
         return Response(data=reservations_data, status=status.HTTP_200_OK)

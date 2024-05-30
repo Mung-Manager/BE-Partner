@@ -9,7 +9,7 @@ class AbstractTicketService(ABC):
         self,
         pet_kindergarden_id: int,
         user,
-        usage_time_count: int,
+        usage_time: int,
         usage_count: int,
         usage_period_in_days_count: int,
         price: int,

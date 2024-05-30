@@ -3,17 +3,12 @@ from typing import Optional
 
 from django.db.models.query import QuerySet
 
-from mung_manager.reservations.models import (
-    DailyReservation,
-    DayOff,
-    KoreaSpecialDay,
-    Reservation,
-)
+from mung_manager.reservations.models import DailyReservation, DayOff, KoreaSpecialDay
 
 
 class AbstractReservationSelector(ABC):
     @abstractmethod
-    def get_reservation_list(self, pet_kindergarden_id: int, reserved_at: str) -> QuerySet[Reservation]:
+    def get_reservation_list(self, pet_kindergarden_id: int, reserved_at: str) -> dict[str, list]:
         pass
 
 

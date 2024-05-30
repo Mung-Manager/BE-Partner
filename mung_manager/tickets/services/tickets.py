@@ -31,7 +31,7 @@ class TicketService(AbstractTicketService):
         self,
         pet_kindergarden_id: int,
         user,
-        usage_time_count: int,
+        usage_time: int,
         usage_count: int,
         usage_period_in_days_count: int,
         price: int,
@@ -41,7 +41,7 @@ class TicketService(AbstractTicketService):
 
         Args:
             pet_kindergarden_id: 반려동물 유치원 아이디입니다.
-            usage_time_count: 사용시간 횟수입니다.
+            usage_time: 사용 가능 시간입니다.
             usage_count: 사용횟수입니다.
             usage_period_in_days_count: 사용기간 횟수입니다.
             price: 가격입니다.
@@ -60,7 +60,7 @@ class TicketService(AbstractTicketService):
         )
         ticket = Ticket.objects.create(
             pet_kindergarden_id=pet_kindergarden_id,
-            usage_time_count=usage_time_count,
+            usage_time=usage_time,
             usage_count=usage_count,
             usage_period_in_days_count=usage_period_in_days_count,
             price=price,

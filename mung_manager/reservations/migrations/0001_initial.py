@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('is_attended', models.BooleanField(db_comment='출석 여부', null=True)),
                 ('reserved_at', models.DateTimeField(db_comment='예약 시간')),
                 ('updated_reserved_at', models.DateTimeField(db_comment='예약 수정 시간', null=True)),
-                ('attendance_time', models.TimeField(db_comment='출석 시간')),
+                ("end_at", models.DateTimeField(db_comment="퇴실 시간", null=True)),
                 ('reservation_status', models.CharField(choices=[('대기', 'PENDING'), ('취소', 'CANCELED'), ('완료', 'COMPLETED'), ('만료', 'EXPIRED')], db_comment='예약 상태', max_length=8)),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),

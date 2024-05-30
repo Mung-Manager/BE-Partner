@@ -124,7 +124,7 @@ pet_kindergarden_reservation_urls = [
     path(
         "/<int:pet_kindergarden_id>/reservations",
         ReservationListAPIManager.as_view(),
-        name="pet-kindergarden-reservations-day-off-detail-toggle-is-active",
+        name="pet-kindergarden-reservations-list",
     ),
 ]
 
