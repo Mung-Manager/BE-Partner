@@ -72,6 +72,7 @@ class SYSTEM_CODE:
     # Reservation code
     NOT_FOUND_DAY_OFF = ("not_found_day_off", "Day off does not exist.")
     ALREADY_EXISTS_DAY_OFF = ("already_exists_day_off", "Day off already exists.")
+    NOT_FOUND_RESERVATION = ("not_found_reservation", "Reservation does not exist.")
 
     # Ticket code
     NOT_FOUND_TICKET = ("not_found_ticket", "Ticket does not exist.")

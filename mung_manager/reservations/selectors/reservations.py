@@ -1,3 +1,5 @@
+from typing import Optional
+
 from mung_manager.reservations.models import Reservation
 from mung_manager.reservations.selectors.abstracts import AbstractReservationSelector
 
@@ -5,7 +7,7 @@ from mung_manager.reservations.selectors.abstracts import AbstractReservationSel
 class ReservationSelector(AbstractReservationSelector):
     """이 클래스는 예약을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
-    def get_reservation_list(self, pet_kindergarden_id: int, reserved_at: str) -> dict[str, list]:
+    def get_reservation_list(self, pet_kindergarden_id: int, reserved_at: str) -> dict[str, list[Reservation]]:
         """예약 리스트를 조회합니다.
 
         Args:
@@ -39,3 +41,18 @@ class ReservationSelector(AbstractReservationSelector):
                 hotel_reservations.append(reservation)
 
         return {"time": time_reservations, "all_day": all_day_reservations, "hotel": hotel_reservations}
+
+    def get_reservation_by_id(self, reservation_id: int) -> Optional[Reservation]:
+        """예약 아이디로 예약을 조회합니다.
+
+        Args:
+            reservation_id (int): 예약 아이디
+
+        Returns:
+            Optional[Reservation]: 예약이 존재하면 예약 객체를 반환하고, 존재하지 않으면 None을 반환
+        """
+        try:
+            return Reservation.objects.filter(id=reservation_id).get()
+
+        except Reservation.DoesNotExist:
+            return None

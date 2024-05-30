@@ -8,6 +8,7 @@ from mung_manager.pet_kindergardens.apis.reservations.apis import (
     ReservationDayOffCreateAPI,
     ReservationDayOffDeleteAPI,
     ReservationListAPI,
+    ReservationToggleAttendanceAPI,
 )
 from mung_manager.schemas.errors.authentications import (
     ErrorAuthenticationPasswordChangedSchema,
@@ -31,6 +32,7 @@ from mung_manager.schemas.errors.pet_kindergardens import (
 from mung_manager.schemas.errors.reservations import (
     ErrorDayOffAlreadyExistsSchema,
     ErrorDayOffNotFoundSchema,
+    ErrorReservationNotFoundSchema,
 )
 
 
@@ -217,3 +219,46 @@ class ReservationListAPIManager(BaseAPIManager):
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
+
+
+class ReservationToggleAttendanceAPIManager(BaseAPIManager):
+    VIEWS_BY_METHOD = {
+        "PATCH": ReservationToggleAttendanceAPI.as_view,
+    }
+
+    @extend_schema(
+        tags=["반려동물 유치원-예약"],
+        summary="반려동물 유치원 예약 출석 상태 변경",
+        description="""
+        Rogic
+            - 유저가 반려동물 유치원 예약 출석 상태를 변경합니다.
+        """,
+        responses={
+            status.HTTP_200_OK: VIEWS_BY_METHOD["PATCH"]().cls.OutputSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
+            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
+            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+        },
+        examples=[
+            # 400
+            ErrorInvalidParameterFormatSchema,
+            # 401
+            ErrorAuthenticationFailedSchema,
+            ErrorNotAuthenticatedSchema,
+            ErrorInvalidTokenSchema,
+            ErrorAuthorizationHeaderSchema,
+            ErrorAuthenticationPasswordChangedSchema,
+            ErrorAuthenticationUserDeletedSchema,
+            ErrorAuthenticationUserInactiveSchema,
+            ErrorAuthenticationUserNotFoundSchema,
+            ErrorTokenIdentificationSchema,
+            # 404
+            ErrorPetKindergardenNotFoundSchema,
+            ErrorReservationNotFoundSchema,
+            # 500
+            ErrorUnknownServerSchema,
+        ],
+    )
+    def patch(self, request, *args, **kwargs):
+        return self.VIEWS_BY_METHOD["PATCH"]()(request, *args, **kwargs)

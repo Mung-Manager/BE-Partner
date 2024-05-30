@@ -12,6 +12,7 @@ from mung_manager.reservations.selectors.korea_special_days import (
 )
 from mung_manager.reservations.selectors.reservations import ReservationSelector
 from mung_manager.reservations.services.day_offs import DayOffService
+from mung_manager.reservations.services.reservations import ReservationService
 
 
 class ReservationContainer(containers.DeclarativeContainer):
@@ -24,6 +25,7 @@ class ReservationContainer(containers.DeclarativeContainer):
         day_off_selector: 휴무일 셀렉터
         korea_special_day_selector: 한국 특별일 셀렉터
         day_off_service: 휴무일 서비스
+        reservation_service: 예약 서비스
     """
 
     pet_kindergarden_selector = providers.Factory(PetKindergardenSelector)
@@ -34,5 +36,10 @@ class ReservationContainer(containers.DeclarativeContainer):
     day_off_service = providers.Factory(
         DayOffService,
         day_off_selector=day_off_selector,
+        pet_kindergarden_selector=pet_kindergarden_selector,
+    )
+    reservation_service = providers.Factory(
+        ReservationService,
+        reservation_selector=reservation_selector,
         pet_kindergarden_selector=pet_kindergarden_selector,
     )

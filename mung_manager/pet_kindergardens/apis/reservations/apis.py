@@ -229,3 +229,22 @@ class ReservationListAPI(APIAuthMixin, APIView):
         )
         reservations_data = self.OutputSerializer(reservations).data
         return Response(data=reservations_data, status=status.HTTP_200_OK)
+
+
+class ReservationToggleAttendanceAPI(APIAuthMixin, APIView):
+    class OutputSerializer(BaseSerializer):
+        id = serializers.IntegerField(label="예약 아이디")
+        is_attended = serializers.BooleanField(label="출석 여부")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._reservation_service = ReservationContainer.reservation_service()
+
+    def patch(self, request: Request, pet_kindergarden_id: int, reservation_id: int) -> Response:
+        reservation = self._reservation_service.toggle_reservation_is_attended(
+            pet_kindergarden_id=pet_kindergarden_id,
+            reservation_id=reservation_id,
+            user=request.user,
+        )
+        reservation_data = self.OutputSerializer(reservation).data
+        return Response(data=reservation_data, status=status.HTTP_200_OK)
