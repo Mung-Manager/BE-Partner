@@ -113,9 +113,9 @@ LANGUAGE_CODE = "en-us"  # 언어 - 국가 설정
 
 TIME_ZONE = "Asia/Seoul"  # 시간대 설정
 
-USE_I18N = True  # 국제화
+USE_I18N = False  # 국제화
 
-USE_TZ = True  # 장고 시간대 사용 여부
+USE_TZ = False  # 장고 시간대 사용 여부
 
 # ==================================================================== #
 #                       DRF config                                     #
