@@ -20,7 +20,8 @@ class ReservationSelector(AbstractReservationSelector):
         """
         reservations = Reservation.objects.filter(
             pet_kindergarden_id=pet_kindergarden_id,
-            reserved_at=reserved_at,
+            reserved_at__date__lte=reserved_at,
+            end_at__date__gte=reserved_at,
         ).select_related(
             "customer",
             "customer_pet",
