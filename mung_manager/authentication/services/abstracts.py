@@ -3,17 +3,18 @@ from typing import Any, Dict, Tuple
 
 from attrs import define
 
+from mung_manager.errors.exceptions import NotImplementedException
 from mung_manager.users.models import User
 
 
 class AbstractAuthService(ABC):
     @abstractmethod
     def generate_token(self, user: User) -> Tuple[str, str]:
-        pass
+        raise NotImplementedException()
 
     @abstractmethod
     def authenticate_user(self, user: User) -> User:
-        pass
+        raise NotImplementedException()
 
 
 @define
@@ -30,8 +31,8 @@ class KakaoAccessToken:
 class AbstractKakaoLoginFlowService(ABC):
     @abstractmethod
     def get_token(self, code: str, redirect_uri: str) -> KakaoAccessToken:
-        pass
+        raise NotImplementedException()
 
     @abstractmethod
     def get_user_info(self, kakao_token: KakaoAccessToken) -> Dict[str, Any]:
-        pass
+        raise NotImplementedException()

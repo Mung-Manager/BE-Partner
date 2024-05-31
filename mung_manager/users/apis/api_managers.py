@@ -1,5 +1,5 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -40,26 +40,29 @@ class UserProfileAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[ErrorPermissionDeniedSchema],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[ErrorUnknownServerSchema],
+            ),
         },
-        examples=[
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request: Request, *args, **kwargs) -> Response:
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
@@ -74,30 +77,33 @@ class UserProfileAPIManager(BaseAPIManager):
         request=VIEWS_BY_METHOD["PATCH"]().cls.InputSerializer,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["PATCH"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[ErrorInvalidParameterFormatSchema, ErrorEmailAlreadyExistSchema],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[ErrorPermissionDeniedSchema],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[ErrorUnknownServerSchema],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            ErrorEmailAlreadyExistSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def patch(self, request: Request, *args, **kwargs) -> Response:
         return self.VIEWS_BY_METHOD["PATCH"]()(request, *args, **kwargs)

@@ -1,10 +1,11 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 
 from mung_manager.common.base.api_managers import BaseAPIManager
 from mung_manager.pet_kindergardens.apis.reservations.apis import (
     ReservationCalendarListAPI,
+    ReservationCreateAPI,
     ReservationCustomerPetListAPI,
     ReservationCustomerTicketListAPI,
     ReservationDayOffCreateAPI,
@@ -32,7 +33,6 @@ from mung_manager.schemas.errors.pet_kindergardens import (
     ErrorPetKindergardenNotFoundSchema,
 )
 from mung_manager.schemas.errors.reservations import (
-    ErrorDayOffAlreadyExistsSchema,
     ErrorDayOffNotFoundSchema,
     ErrorReservationNotFoundSchema,
 )
@@ -53,32 +53,45 @@ class ReservationCalendarListAPIManager(BaseAPIManager):
         parameters=[VIEWS_BY_METHOD["GET"]().cls.FilterSerializer],
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
@@ -99,33 +112,45 @@ class ReservationDayOffListAPIManager(BaseAPIManager):
         request=VIEWS_BY_METHOD["POST"]().cls.InputSerializer,
         responses={
             status.HTTP_201_CREATED: VIEWS_BY_METHOD["POST"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            ErrorDayOffNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def post(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["POST"]()(request, *args, **kwargs)
@@ -145,33 +170,46 @@ class ReservationDayOffDetailAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiTypes.NONE,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                    ErrorDayOffNotFoundSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            ErrorDayOffAlreadyExistsSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def delete(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["DELETE"]()(request, *args, **kwargs)
@@ -180,6 +218,7 @@ class ReservationDayOffDetailAPIManager(BaseAPIManager):
 class ReservationListAPIManager(BaseAPIManager):
     VIEWS_BY_METHOD = {
         "GET": ReservationListAPI.as_view,
+        "POST": ReservationCreateAPI.as_view,
     }
 
     @extend_schema(
@@ -192,35 +231,101 @@ class ReservationListAPIManager(BaseAPIManager):
         parameters=[VIEWS_BY_METHOD["GET"]().cls.FilterSerializer],
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=["반려동물 유치원-예약"],
+        summary="반려동물 유치원 예약 생성",
+        description="""
+        Rogic
+            - 유저가 반려동물 유치원 예약을 생성합니다.
+        """,
+        request=VIEWS_BY_METHOD["POST"]().cls.InputSerializer,
+        responses={
+            status.HTTP_201_CREATED: VIEWS_BY_METHOD["POST"]().cls.OutputSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
+        },
+    )
+    def post(self, request, *args, **kwargs):
+        return self.VIEWS_BY_METHOD["POST"]()(request, *args, **kwargs)
 
 
 class ReservationToggleAttendanceAPIManager(BaseAPIManager):
@@ -237,30 +342,39 @@ class ReservationToggleAttendanceAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["PATCH"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorReservationNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            ErrorReservationNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def patch(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["PATCH"]()(request, *args, **kwargs)
@@ -281,32 +395,45 @@ class ReservationCustomerPetListAPIManager(BaseAPIManager):
         parameters=[VIEWS_BY_METHOD["GET"]().cls.FilterSerializer],
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
@@ -326,32 +453,39 @@ class ReservationCustomerTicketListAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)

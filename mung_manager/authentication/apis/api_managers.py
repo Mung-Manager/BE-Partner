@@ -1,5 +1,5 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
@@ -34,19 +34,16 @@ class JWTRefreshAPIManager(BaseAPIManager):
         request=TokenRefreshSerializer,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["POST"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorInvalidParameterFormatSchema]
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorOauthErrorSchema, ErrorInvalidTokenSchema]
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorOauthErrorSchema,
-            ErrorInvalidTokenSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def post(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["POST"]()(request, *args, **kwargs)
@@ -69,22 +66,23 @@ class KakaoLoginAPIManager(BaseAPIManager):
         parameters=[VIEWS_BY_METHOD["GET"]().cls.InputSerializer],
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorInvalidParameterFormatSchema]
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorOauthErrorSchema,
+                    ErrorKakaoAccessTokenFailedSchema,
+                    ErrorKakaoUserInfoFailedSchema,
+                    ErrorKakaoPhoneNumberNotAuthenticatedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorOauthErrorSchema,
-            ErrorKakaoAccessTokenFailedSchema,
-            ErrorKakaoUserInfoFailedSchema,
-            ErrorKakaoPhoneNumberNotAuthenticatedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)

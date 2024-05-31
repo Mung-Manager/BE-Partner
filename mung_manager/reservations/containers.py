@@ -49,6 +49,8 @@ class ReservationContainer(containers.DeclarativeContainer):
     )
     reservation_service = providers.Factory(
         ReservationService,
+        customer_selector=customer_selector,
+        customer_ticket_selector=customer_ticket_selector,
         reservation_selector=reservation_selector,
         pet_kindergarden_selector=pet_kindergarden_selector,
     )

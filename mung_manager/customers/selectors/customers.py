@@ -116,3 +116,30 @@ class CustomerSelector(AbstractCustomerSelector):
             QuerySet[Customer]: 고객 리스트 쿼리셋이며 존재하지 않으면 빈 쿼리셋을 반환
         """
         return Customer.objects.filter(pet_kindergarden_id=pet_kindergarden_id)
+
+    def get_customer_by_id_and_customer_pet_id_for_reservation(
+        self,
+        customer_id: int,
+        customer_pet_id: int,
+    ) -> Optional[Customer]:
+        """이 함수는 고객 아이디, 삭제되지 않은 고객 반려동물 아이디로 예약을 위한 고객을 가져옵니다.
+
+        Args:
+            customer_id (int): 고객 아이디
+            customer_pet_id (int): 고객 반려동물 아이디
+
+        Returns:
+            Optional[Customer]: 고객 객체이며 존재하지 않으면 None을 반환
+        """
+        try:
+            return (
+                Customer.objects.filter(
+                    customer_pets__id=customer_pet_id,
+                    customer_pets__is_deleted=False,
+                    customer_pets__deleted_at__isnull=True,
+                )
+                .filter(id=customer_id)
+                .get()
+            )
+        except Customer.DoesNotExist:
+            return None

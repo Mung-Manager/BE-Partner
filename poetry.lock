@@ -651,6 +651,16 @@ celery = ">=5.2.7,<6.0"
 Django = ">=3.2.18"
 
 [[package]]
+name = "django-concurrency"
+version = "2.5"
+description = "Optimistic lock implementation for Django. Prevents users from doing concurrent editing."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-concurrency-2.5.tar.gz", hash = "sha256:3eb0f17807ee1b967460d298c515018b30fb573413305dec5bbee775915dc979"},
+]
+
+[[package]]
 name = "django-cors-headers"
 version = "4.3.1"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
@@ -1629,6 +1639,17 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "pytz"
+version = "2024.1"
+description = "World timezone definitions, modern and historical"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
+    {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.1"
 description = "YAML parser and emitter for Python"
@@ -2072,4 +2093,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0437666e1deebe5280c122cc3914915ec31cb0df84b22d5c08e49fe07b004296"
+content-hash = "e9be52422016f3e8b9fdd4fa8b5524d8a38907c3b74c3bb856f5c0a5490ea1f8"

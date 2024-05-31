@@ -10,6 +10,10 @@ from mung_manager.common.constants import SYSTEM_CODE
 from mung_manager.common.fields import DateFromDateTimeField, TimeFromDateTimeField
 from mung_manager.common.selectors import check_object_or_not_found
 from mung_manager.common.utils import inline_serializer
+from mung_manager.common.validators import (
+    InvalidEndAtValidator,
+    InvalidReservedAtValidator,
+)
 from mung_manager.reservations.containers import ReservationContainer
 
 
@@ -357,3 +361,40 @@ class ReservationCustomerTicketListAPI(APIAuthMixin, APIView):
         )
         customer_tickets_data = self.OutputSerializer(customer_tickets).data
         return Response(data=customer_tickets_data, status=status.HTTP_200_OK)
+
+
+class ReservationCreateAPI(APIAuthMixin, APIView):
+    class InputSerializer(BaseSerializer):
+        customer_ticket_id = serializers.IntegerField(required=True, help_text="고객 티켓 아이디")
+        customer_id = serializers.IntegerField(required=True, help_text="고객 아이디")
+        customer_pet_id = serializers.IntegerField(required=True, help_text="고객 반려동물 아이디")
+        reserved_at = serializers.DateTimeField(
+            required=True, help_text="예약 날짜", validators=[InvalidReservedAtValidator()]
+        )
+        end_at = serializers.DateTimeField(required=True, help_text="퇴실 날짜", validators=[InvalidEndAtValidator()])
+
+    class OutputSerializer(BaseSerializer):
+        id = serializers.IntegerField(label="예약 아이디")
+        is_attended = serializers.BooleanField(label="출석 여부")
+        reserved_at = DateFromDateTimeField(label="예약 날짜")
+        end_at = DateFromDateTimeField(label="퇴실 날짜")
+        reservation_status = serializers.CharField(label="예약 상태")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._reservation_service = ReservationContainer.reservation_service()
+
+    def post(self, request: Request, pet_kindergarden_id: int) -> Response:
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        reservation = self._reservation_service.create_reservation(
+            pet_kindergarden_id=pet_kindergarden_id,
+            customer_ticket_id=input_serializer.validated_data["customer_ticket_id"],
+            customer_id=input_serializer.validated_data["customer_id"],
+            customer_pet_id=input_serializer.validated_data["customer_pet_id"],
+            reserved_at=input_serializer.validated_data["reserved_at"],
+            end_at=input_serializer.validated_data["end_at"],
+            user=request.user,
+        )
+        reservation_data = self.OutputSerializer(reservation).data
+        return Response(data=reservation_data, status=status.HTTP_201_CREATED)

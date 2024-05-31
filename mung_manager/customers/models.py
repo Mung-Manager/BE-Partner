@@ -1,3 +1,4 @@
+from concurrency.fields import IntegerVersionField
 from django.db import models
 
 from mung_manager.common.base.models import TimeStampedModel
@@ -77,6 +78,8 @@ class CustomerTicket(TimeStampedModel):
     expired_at = models.DateTimeField(db_comment="만료 시간")
     total_count = models.IntegerField(db_comment="총 횟수")
     used_count = models.IntegerField(db_comment="사용 횟수")
+    unused_count = models.IntegerField(db_comment="사용 가능 횟수")
+    version = IntegerVersionField(db_comment="버전")
     ticket = models.ForeignKey(
         Ticket,
         on_delete=models.CASCADE,
@@ -91,7 +94,7 @@ class CustomerTicket(TimeStampedModel):
     )
 
     def __str__(self):
-        return f"[{self.id}]: {self.ticket_type}"
+        return f"[{self.id}]: {self.total_count - self.used_count}"
 
     class Meta:
         db_table = "customer_ticket"

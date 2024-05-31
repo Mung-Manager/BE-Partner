@@ -32,6 +32,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "django_celery_results",
     "django_celery_beat",
+    "concurrency",
 ]
 
 INSTALLED_APPS = [

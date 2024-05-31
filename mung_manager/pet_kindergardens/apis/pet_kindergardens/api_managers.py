@@ -1,5 +1,5 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 
 from mung_manager.common.base.api_managers import BaseAPIManager
@@ -48,34 +48,35 @@ class PetkindergardenListAPIManager(BaseAPIManager):
         request=VIEWS_BY_METHOD["POST"]().cls.InputSerializer,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["POST"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[ErrorInvalidParameterFormatSchema, ErrorPetKindergardenAlreadyExistsSchema],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                    ErrorKakaoLocationFailedSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPermissionDeniedSchema]
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPetKindergardenNotFoundSchema]
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            ErrorPetKindergardenAlreadyExistsSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            ErrorKakaoLocationFailedSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def post(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["POST"]()(request, *args, **kwargs)
@@ -96,26 +97,30 @@ class PetkindergardenDetailAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPermissionDeniedSchema]
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPetKindergardenNotFoundSchema]
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]().as_view()(request, *args, **kwargs)
@@ -130,30 +135,34 @@ class PetkindergardenDetailAPIManager(BaseAPIManager):
         request=VIEWS_BY_METHOD["PUT"]().cls.InputSerializer,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["PUT"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorInvalidParameterFormatSchema]
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                    ErrorKakaoLocationFailedSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPermissionDeniedSchema]
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPetKindergardenNotFoundSchema]
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            ErrorKakaoLocationFailedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def put(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["PUT"]().as_view()(request, *args, **kwargs)
@@ -173,29 +182,30 @@ class PetkindergardenSearchAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiTypes.OBJECT,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorInvalidParameterFormatSchema]
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPermissionDeniedSchema]
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 400
-            ErrorInvalidParameterFormatSchema,
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
@@ -215,29 +225,30 @@ class PetkindergardenProfileAPIManager(BaseAPIManager):
         """,
         responses={
             status.HTTP_200_OK: VIEWS_BY_METHOD["GET"]().cls.OutputSerializer,
-            status.HTTP_401_UNAUTHORIZED: OpenApiTypes.OBJECT,
-            status.HTTP_403_FORBIDDEN: OpenApiTypes.OBJECT,
-            status.HTTP_404_NOT_FOUND: OpenApiTypes.OBJECT,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiTypes.OBJECT,
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPermissionDeniedSchema]
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorPetKindergardenNotFoundSchema]
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT, examples=[ErrorUnknownServerSchema]
+            ),
         },
-        examples=[
-            # 401
-            ErrorAuthenticationFailedSchema,
-            ErrorNotAuthenticatedSchema,
-            ErrorInvalidTokenSchema,
-            ErrorAuthorizationHeaderSchema,
-            ErrorAuthenticationPasswordChangedSchema,
-            ErrorAuthenticationUserDeletedSchema,
-            ErrorAuthenticationUserInactiveSchema,
-            ErrorAuthenticationUserNotFoundSchema,
-            ErrorTokenIdentificationSchema,
-            # 403
-            ErrorPermissionDeniedSchema,
-            # 404
-            ErrorPetKindergardenNotFoundSchema,
-            # 500
-            ErrorUnknownServerSchema,
-        ],
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)

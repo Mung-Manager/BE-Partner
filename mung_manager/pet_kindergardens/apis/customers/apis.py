@@ -13,7 +13,10 @@ from mung_manager.common.selectors import (
     get_object_or_not_found,
 )
 from mung_manager.common.utils import inline_serializer
-from mung_manager.common.validators import PhoneNumberValidator, UniquePetNameValidator
+from mung_manager.common.validators import (
+    InvalidPhoneNumberValidator,
+    UniquePetNameValidator,
+)
 from mung_manager.customers.containers import CustomerContainer
 from mung_manager.tickets.containers import TicketContainer
 
@@ -103,7 +106,7 @@ class CustomerCreateAPI(APIAuthMixin, APIView):
             required=True,
             min_length=11,
             max_length=16,
-            validators=[PhoneNumberValidator()],
+            validators=[InvalidPhoneNumberValidator()],
             label="고객 전화번호",
         )
         pets = serializers.ListField(
@@ -247,7 +250,7 @@ class CustomerUpdateAPI(APIAuthMixin, APIView):
         phone_number = serializers.CharField(
             required=True,
             label="고객 전화번호",
-            validators=[PhoneNumberValidator()],
+            validators=[InvalidPhoneNumberValidator()],
         )
         pets_to_add = serializers.ListField(
             child=serializers.CharField(),
@@ -445,14 +448,11 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
         )
         usage_count = serializers.IntegerField(source="customer_ticket.ticket.usage_count", label="사용 가능 횟수")
         used_count = serializers.IntegerField(source="customer_ticket.used_count", label="사용 횟수")
-        unused_count = serializers.SerializerMethodField(label="사용 가능 횟수")
+        unused_count = serializers.IntegerField(source="customer_ticket.unused_count", label="사용 가능 횟수")
         reserved_at = serializers.DateTimeField(source="reservation.reserved_at", label="예약 일시")
         updated_reserved_at = serializers.DateTimeField(source="reservation.updated_at", label="예약 수정 일시")
         expired_at = serializers.DateTimeField(source="customer_ticket.expired_at", label="만료 일시")
         is_attended = serializers.BooleanField(source="reservation.is_attended", label="출석 여부")
-
-        def get_unused_count(self, obj) -> int:
-            return obj.customer_ticket.total_count - obj.customer_ticket.used_count
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -55,6 +55,7 @@ class Migration(migrations.Migration):
                 ('expired_at', models.DateTimeField(db_comment='만료 시간')),
                 ('total_count', models.IntegerField(db_comment='총 횟수')),
                 ('used_count', models.IntegerField(db_comment='사용 횟수')),
+                ('unused_count', models.IntegerField(db_comment='사용 가능 횟수')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
                 ('customer', models.ForeignKey(db_comment='고객 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='customer_tickets', to='customers.customer')),

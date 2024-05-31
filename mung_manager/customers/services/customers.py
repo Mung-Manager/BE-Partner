@@ -13,7 +13,10 @@ from mung_manager.common.selectors import (
     get_object_or_not_found,
 )
 from mung_manager.common.services import update_model
-from mung_manager.common.validators import PhoneNumberValidator, UniquePetNameValidator
+from mung_manager.common.validators import (
+    InvalidPhoneNumberValidator,
+    UniquePetNameValidator,
+)
 from mung_manager.customers.models import Customer, CustomerPet
 from mung_manager.customers.selectors.customer_pets import CustomerPetSelector
 from mung_manager.customers.selectors.customers import CustomerSelector
@@ -116,7 +119,7 @@ class CustomerService(AbstractCustomerService):
         customer_instances: List[Customer] = []
         pet_instances: List[CustomerPet] = []
 
-        phone_number_validator = PhoneNumberValidator()
+        phone_number_validator = InvalidPhoneNumberValidator()
         unique_pet_name_validator = UniquePetNameValidator()
 
         # CSV 파일을 읽어서 고객 객체를 생성

@@ -67,6 +67,7 @@ class CustomerTicketService(AbstractCustomerTicketService):
             ticket_id=ticket_id,
             expired_at=timezone.now() + timedelta(days=ticket.usage_period_in_days_count),
             total_count=ticket.usage_count,
+            unused_count=ticket.usage_count,
             used_count=0,
         )
 

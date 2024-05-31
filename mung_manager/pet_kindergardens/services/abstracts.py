@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
+from mung_manager.errors.exceptions import NotImplementedException
 from mung_manager.pet_kindergardens.models import PetKindergarden
 
 
 class AbstractPetKindergardenService(ABC):
     @abstractmethod
     def _get_coordinates_by_road_address(self, road_address: str) -> Tuple[float, float]:
-        pass
+        raise NotImplementedException()
 
     @abstractmethod
     def create_pet_kindergarden(
@@ -29,7 +30,7 @@ class AbstractPetKindergardenService(ABC):
         daily_pet_limit: int,
         main_thumbnail_url: str,
     ) -> PetKindergarden:
-        pass
+        raise NotImplementedException()
 
     @abstractmethod
     def update_pet_kindergarden(
@@ -52,4 +53,4 @@ class AbstractPetKindergardenService(ABC):
         daily_pet_limit: int,
         main_thumbnail_url: str,
     ) -> PetKindergarden:
-        pass
+        raise NotImplementedException()

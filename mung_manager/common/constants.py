@@ -73,6 +73,15 @@ class SYSTEM_CODE:
     NOT_FOUND_DAY_OFF = ("not_found_day_off", "Day off does not exist.")
     ALREADY_EXISTS_DAY_OFF = ("already_exists_day_off", "Day off already exists.")
     NOT_FOUND_RESERVATION = ("not_found_reservation", "Reservation does not exist.")
+    ALREADY_EXISTS_RESERVATION_CUSTOMER_PET = (
+        "already_exists_reservation_customer_pet",
+        "Reservation already exists for customer pet.",
+    )
+    INVALID_RESERVED_AT = (
+        "validation_failed",
+        "The reservation can only be scheduled for dates after the current time.",
+    )
+    INVALID_END_AT = ("validation_failed", "The reservation end time must be later than the start time.")
 
     # Ticket code
     NOT_FOUND_TICKET = ("not_found_ticket", "Ticket does not exist.")
@@ -92,6 +101,10 @@ class SYSTEM_CODE:
         "not_found_customer_pet",
         "Customer pet does not exist.",
     )
+    NOT_FOUND_CUSTOMER_TICKET = (
+        "not_found_customer_ticket",
+        "Customer ticket does not exist.",
+    )
     ALREADY_EXISTS_CUSTOMER = (
         "already_exists_customer",
         "Customer already exists.",
@@ -99,6 +112,14 @@ class SYSTEM_CODE:
     ALREADY_EXISTS_CUSTOMER_PET = (
         "already_exists_customer_pet",
         "Customer pet already exists.",
+    )
+    NO_CUSTOMER_TICKET_COUNT = (
+        "no_customer_ticket_count",
+        "There are no remaining ticket counts.",
+    )
+    CONFILCT_CUSTOMER_TICKET = (
+        "conflict_customer_ticket",
+        "A conflict occurred while using the ticket. Please try again.",
     )
 
     @classmethod

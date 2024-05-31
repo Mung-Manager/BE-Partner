@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
+from mung_manager.errors.exceptions import NotImplementedException
 from mung_manager.users.models import User
 
 
@@ -17,8 +18,8 @@ class AbstractUserService(ABC):
         social_provider: int,
         has_phone_number: bool,
     ) -> User:
-        pass
+        raise NotImplementedException()
 
     @abstractmethod
     def update_user(self, user, data: OrderedDict) -> User:
-        pass
+        raise NotImplementedException()
