@@ -13,6 +13,7 @@ on:
     permissions:
       users:
         - saJaeHyukc
+        - DongwookKim0823
 
 jobs:
   partner-test-and-fomat-lint:
