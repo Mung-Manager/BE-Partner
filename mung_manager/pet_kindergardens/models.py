@@ -51,9 +51,6 @@ class PetKindergarden(TimeStampedModel):
         db_comment="유저 아이디",
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.name}"
-
     class Meta:
         db_table = "pet_kindergarden"
 
@@ -91,9 +88,6 @@ class RawPetKindergarden(models.Model):
         db_column="shortAddress",
         db_comment="간단 주소",
     )
-
-    def __str__(self):
-        return f"[{self.id}]: {self.name}"
 
     class Meta:
         db_table = "raw_pet_kindergarden"

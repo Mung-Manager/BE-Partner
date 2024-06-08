@@ -21,6 +21,17 @@ class Reservation(TimeStampedModel):
         db_comment="예약 상태",
         choices=[(r.value, r.name) for r in ReservationStatus],
     )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        related_name="children",
+        db_comment="부모 예약 아이디",
+        null=True,
+    )
+    depth = models.PositiveIntegerField(
+        db_comment="노드 깊이",
+        default=0,
+    )
     customer = models.ForeignKey(
         "customers.Customer",
         on_delete=models.CASCADE,
@@ -46,9 +57,6 @@ class Reservation(TimeStampedModel):
         db_comment="펫 유치원 아이디",
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.customer.name} - {self.pet_kindergarden.name}"
-
     class Meta:
         db_table = "reservation"
 
@@ -73,9 +81,6 @@ class DailyReservation(TimeStampedModel):
         db_comment="펫 유치원 아이디",
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.reserved_at}"
-
     class Meta:
         db_table = "daily_reservation"
 
@@ -96,9 +101,6 @@ class DayOff(TimeStampedModel):
         db_comment="펫 유치원 아이디",
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.pet_kindergarden.name} - {self.day_off}"
-
     class Meta:
         db_table = "day_off"
 
@@ -114,9 +116,6 @@ class KoreaSpecialDay(TimeStampedModel):
     name = models.CharField(max_length=64, db_comment="공휴일 이름")
     special_day_at = models.DateField(db_comment="공휴일 날짜")
     is_holiday = models.BooleanField(db_comment="공휴일 여부", default=True)
-
-    def __str__(self):
-        return f"[{self.id}]: {self.name} - {self.special_day_at}"
 
     class Meta:
         db_table = "korea_special_day"

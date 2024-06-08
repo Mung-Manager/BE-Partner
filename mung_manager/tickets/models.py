@@ -31,8 +31,5 @@ class Ticket(TimeStampedModel):
         db_comment="펫 유치원 아이디",
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.pet_kindergarden.name} - {self.ticket_type}"
-
     class Meta:
         db_table = "ticket"

@@ -41,6 +41,8 @@ class Migration(migrations.Migration):
                 ('reservation_status', models.CharField(choices=[('대기', 'PENDING'), ('취소', 'CANCELED'), ('완료', 'COMPLETED'), ('만료', 'EXPIRED')], db_comment='예약 상태', max_length=8)),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
+                ('is_deleted', models.BooleanField(default=False, db_comment='삭제 여부')),
+                ('deleted_at', models.DateTimeField(null=True, db_comment='삭제 일시')),
                 ('customer', models.ForeignKey(db_comment='고객 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to='customers.customer')),
                 ('customer_pet', models.ForeignKey(db_comment='고객 펫 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to='customers.customerpet')),
                 ('customer_ticket', models.ForeignKey(db_comment='고객 티켓 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to='customers.customerticket')),

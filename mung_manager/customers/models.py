@@ -35,9 +35,6 @@ class Customer(TimeStampedModel):
         blank=True,
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.name}"
-
     class Meta:
         db_table = "customer"
 
@@ -59,9 +56,6 @@ class CustomerPet(TimeStampedModel):
         related_name="customer_pets",
         db_comment="고객 아이디",
     )
-
-    def __str__(self):
-        return f"[{self.id}]: {self.name}"
 
     class Meta:
         db_table = "customer_pet"
@@ -93,9 +87,6 @@ class CustomerTicket(TimeStampedModel):
         db_comment="고객 아이디",
     )
 
-    def __str__(self):
-        return f"[{self.id}]: {self.total_count - self.used_count}"
-
     class Meta:
         db_table = "customer_ticket"
 
@@ -120,9 +111,6 @@ class CustomerTicketReservation(TimeStampedModel):
         related_name="customer_ticket_reservations",
         db_comment="예약 아이디",
     )
-
-    def __str__(self):
-        return f"[{self.id}]: {self.used_at}"
 
     class Meta:
         db_table = "customer_ticket_reservation"

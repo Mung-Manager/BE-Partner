@@ -37,9 +37,6 @@ class User(AbstractBaseUser, TimeStampedModel, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name", "phone_number", "gender", "birth"]
 
-    def __str__(self):
-        return f"[{self.id}]: {self.email}"
-
     @property
     def is_staff(self):
         return self.is_admin
@@ -61,9 +58,6 @@ class UserSocialProvider(SimpleModel):
         serialize=False,
         db_comment="유저 소셜 제공자 아이디",
     )
-
-    def __str__(self):
-        return f"[{self.id}]: {self.name}"
 
     class Meta:
         db_table = "T_user_social_provider"
