@@ -85,7 +85,7 @@ class CursorPagination(_CursorPagination):
 
     cursor_query_param = "cursor"
     page_size = 10
-    ordering = "-created_at"
+    ordering = "-id"
     page_size_query_param = "page_size"
     max_page_size = 100
 
