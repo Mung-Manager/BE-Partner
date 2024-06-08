@@ -9,7 +9,12 @@ services:
     image: redis:7.2.2
     ports:
       - "6379:6379"
+    environment:
+      - TZ=Asia/Seoul
+      - /etc/localtime:/etc/localtime:ro
     restart: on-failure
+    networks:
+      - app_net
 
   postgres_db:
     container_name: postgres_db
@@ -19,17 +24,23 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=github_actions
+      - POSTGRES_DB=mung_manager
+      - TZ=Asia/Seoul
+      - /etc/localtime:/etc/localtime:ro
     restart: on-failure
+    networks:
+      - app_net
 
   partner_service:
     container_name: partner_service
     build:
       context: .
       dockerfile: docker/local.Dockerfile
+    entrypoint: sh -c "poetry run gunicorn config.wsgi --workers=5 -b 0.0.0.0:8000"
     environment:
-      - GITHUB_WORKFLOW=True
-    command: poetry run python manage.py runserver 0.0.0.0:8000
+      - DJANGO_SETTINGS_MODULE=config.django.local
+      - TZ=Asia/Seoul
+      - /etc/localtime:/etc/localtime:ro
     volumes:
       - .:/app
     ports:
@@ -38,3 +49,9 @@ services:
       - postgres_db
       - redis
     restart: on-failure
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
