@@ -1,15 +1,23 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import include, path
 
 urlpatterns = [
     path(
         "partner/api/v1/auth",
-        include(("mung_manager.authentication.apis.urls", "api-auth")),
+        include(
+            (
+                "mung_manager.authentication.apis.urls",
+                "api-auth",
+            )
+        ),
     ),
     path(
         "partner/api/v1/users",
-        include(("mung_manager.users.apis.urls", "api-users")),
+        include(
+            (
+                "mung_manager.users.apis.urls",
+                "api-users",
+            )
+        ),
     ),
     path(
         "partner/api/v1/pet-kindergardens",
@@ -22,7 +30,12 @@ urlpatterns = [
     ),
     path(
         "partner/api/v1/files",
-        include(("mung_manager.files.apis.urls", "api-files")),
+        include(
+            (
+                "mung_manager.files.apis.urls",
+                "api-files",
+            )
+        ),
     ),
 ]
 
@@ -31,6 +44,3 @@ from config.settings.swagger.setup import SwaggerSetup  # noqa
 
 urlpatterns = DebugToolbarSetup.do_urls(urlpatterns)
 urlpatterns = SwaggerSetup.do_urls(urlpatterns)
-
-# Static/Media File Root (CSS, JavaScript, Images)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

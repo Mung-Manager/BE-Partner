@@ -7,7 +7,7 @@ DATABASES = {
         "NAME": env("LOCAL_POSTGRESQL_DATABASE", default="mung_manager"),
         "USER": env("LOCAL_POSTGRESQL_USER", default="postgres"),
         "PASSWORD": env("LOCAL_POSTGRESQL_PASSWORD", default="password"),
-        "HOST": env("LOCAL_POSTGRESQL_HOST", default="localhost"),
+        "HOST": env("LOCAL_POSTGRESQL_HOST", default="postgres_db"),
         "PORT": env("LOCAL_POSTGRESQL_PORT", default="5432"),
         "CONN_MAX_AGE": 60,
     },
