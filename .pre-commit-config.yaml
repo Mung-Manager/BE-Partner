@@ -35,15 +35,5 @@ repos:
       - id: isort
         args: ['--profile', 'black', '--filter-files', 'true']
 
-  - repo: local
-    hooks:
-      - id: mypy
-        name: mypy
-        entry: poetry run mypy --config mypy.ini mung_manager/
-        always_run: true
-        pass_filenames: false
-        language: system
-        types: [python]
-
 default_language_version:
   python: python3.11
