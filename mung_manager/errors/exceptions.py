@@ -3,6 +3,8 @@ from rest_framework import status
 from mung_manager.common.base.exceptions import BaseAPIException
 from mung_manager.common.constants import SYSTEM_CODE
 
+ExternalExceptions = []
+
 
 class InvalidParameterFormatException(BaseAPIException):
     status_code = status.HTTP_400_BAD_REQUEST
