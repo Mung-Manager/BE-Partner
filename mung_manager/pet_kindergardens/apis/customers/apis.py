@@ -57,12 +57,12 @@ class CustomerListAPI(APIAuthMixin, APIView):
             fields={
                 "id": serializers.IntegerField(label="티켓 아이디"),
                 "total_count": serializers.IntegerField(label="총 횟수"),
-                "used_count": serializers.IntegerField(label="사용된 횟수"),
+                "used_count": serializers.IntegerField(label="사용한 횟수"),
                 "ticket": inline_serializer(
                     label="티켓 정보",
                     fields={
                         "ticket_type": serializers.CharField(label="티켓 타입"),
-                        "usage_time": serializers.IntegerField(label="사용 가능 시간"),
+                        "usage_time": serializers.IntegerField(label="사용 가능한 시간"),
                     },
                 ),
             },
@@ -81,14 +81,14 @@ class CustomerListAPI(APIAuthMixin, APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        customers = self._customer_selector.get_customer_list(filters=filter_serializer.validated_data)
+        customers = self._customer_selector.get_by_filter_for_search(filters=filter_serializer.validated_data)
         pagination_customers_data = get_paginated_data(
             pagination_class=self.Pagination,
             serializer_class=self.OutputSerializer,
@@ -207,7 +207,7 @@ class CustomerDetailAPI(APIAuthMixin, APIView):
 
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
@@ -215,7 +215,7 @@ class CustomerDetailAPI(APIAuthMixin, APIView):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         customer = get_object_or_not_found(
-            self._customer_selector.get_customer_with_undeleted_customer_pet_by_id(
+            self._customer_selector.get_with_undeleted_customer_pet_by_id(
                 customer_id=customer_id,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER"),
@@ -305,8 +305,8 @@ class CustomerUpdateAPI(APIAuthMixin, APIView):
 class CustomerTicketActiveListAPI(APIAuthMixin, APIView):
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time = serializers.IntegerField(label="사용 가능 시간")
-        usage_count = serializers.IntegerField(label="사용 가능 횟수")
+        usage_time = serializers.IntegerField(label="사용 가능한 시간")
+        usage_count = serializers.IntegerField(label="사용 가능한 횟수")
         usage_period_in_days_count = serializers.IntegerField(label="사용 가능 일수")
         price = serializers.IntegerField(label="가격")
         ticket_type = serializers.CharField(label="티켓 타입")
@@ -318,14 +318,14 @@ class CustomerTicketActiveListAPI(APIAuthMixin, APIView):
 
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        tickets = self._ticket_selector.get_undeleted_ticket_by_pet_kindergarden_id(
+        tickets = self._ticket_selector.get_querset_by_pet_kindergarden_id_for_undeleted_ticket(
             pet_kindergarden_id=pet_kindergarden_id,
         )
         tickets_data = self.OutputSerializer(tickets, many=True).data
@@ -346,20 +346,20 @@ class CustomerTicketListAPI(APIAuthMixin, APIView):
         offset = serializers.IntegerField(default=0, min_value=0, help_text="페이지 오프셋")
 
     class OutputSerializer(BaseSerializer):
-        id = serializers.IntegerField(label="티켓 아이디")
-        usage_time = serializers.IntegerField(source="ticket.usage_time", label="사용 가능 시간")
-        usage_count = serializers.IntegerField(source="ticket.usage_count", label="사용 가능 횟수")
+        id = serializers.IntegerField(label="고객 티켓 등록 로그 아이디")
+        usage_time = serializers.IntegerField(label="사용 가능한 시간", source="customer_ticket.ticket.usage_time")
+        usage_count = serializers.IntegerField(label="사용 가능한 횟수", source="customer_ticket.ticket.usage_count")
         usage_period_in_days_count = serializers.IntegerField(
-            source="ticket.usage_period_in_days_count", label="사용 가능 일수"
+            label="사용 가능 일수", source="customer_ticket.ticket.usage_period_in_days_count"
         )
-        price = serializers.IntegerField(source="ticket.price", label="가격")
-        ticket_type = serializers.CharField(source="ticket.ticket_type", label="티켓 타입")
+        price = serializers.IntegerField(label="가격", source="customer_ticket.ticket.price")
+        ticket_type = serializers.CharField(label="티켓 타입", source="customer_ticket.ticket.ticket_type")
         created_at = serializers.DateTimeField(label="생성 일시")
-        expired_at = serializers.DateTimeField(label="만료 일시")
+        expired_at = serializers.DateTimeField(label="만료 일시", source="customer_ticket.expired_at")
         status = serializers.SerializerMethodField(label="상태")
 
         def get_status(self, obj) -> str:
-            if obj.expired_at < timezone.now():
+            if obj.customer_ticket.expired_at < timezone.now():
                 return "만료"
             return "이용중"
 
@@ -367,11 +367,11 @@ class CustomerTicketListAPI(APIAuthMixin, APIView):
         super().__init__(*args, **kwargs)
         self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._customer_selector = CustomerContainer.customer_selector()
-        self._customer_ticket_selector = CustomerContainer.customer_ticket_selector()
+        self._customer_ticket_registration_log_selector = CustomerContainer.customer_ticket_registration_log_selector()
 
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
@@ -379,12 +379,14 @@ class CustomerTicketListAPI(APIAuthMixin, APIView):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         check_object_or_not_found(
-            self._customer_selector.check_is_exists_customer_by_id(customer_id=customer_id),
+            self._customer_selector.exists_by_id(customer_id=customer_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER"),
             code=SYSTEM_CODE.code("NOT_FOUND_CUSTOMER"),
         )
-        customer_tickets = self._customer_ticket_selector.get_customer_ticket_with_ticket_queryset_by_customer_id(
-            customer_id=customer_id,
+        customer_tickets = (
+            self._customer_ticket_registration_log_selector.get_queryset_by_customer_id_for_ticket_registration_logs(
+                customer_id=customer_id,
+            )
         )
         pagination_customer_tickets_data = get_paginated_data(
             pagination_class=self.Pagination,
@@ -400,7 +402,7 @@ class CustomerTicketCreateAPI(APIAuthMixin, APIView):
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
         total_count = serializers.IntegerField(label="총 사용 가능 횟수")
-        used_count = serializers.IntegerField(label="사용 횟수")
+        used_count = serializers.IntegerField(label="사용한 횟수")
         expired_at = serializers.DateTimeField(label="만료 일시")
         created_at = serializers.DateTimeField(label="생성 일시")
 
@@ -440,29 +442,26 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
         offset = serializers.IntegerField(default=0, min_value=0, help_text="페이지 오프셋")
 
     class OutputSerializer(BaseSerializer):
-        id = serializers.IntegerField(label="티켓 로그 아이디")
-        ticket_type = serializers.CharField(source="customer_ticket.ticket.ticket_type", label="티켓 타입")
-        usage_time = serializers.IntegerField(
-            source="customer_ticket.ticket.usage_time",
-            label="사용 가능 시간",
-        )
-        usage_count = serializers.IntegerField(source="customer_ticket.ticket.usage_count", label="사용 가능 횟수")
-        used_count = serializers.IntegerField(source="customer_ticket.used_count", label="사용 횟수")
-        unused_count = serializers.IntegerField(source="customer_ticket.unused_count", label="사용 가능 횟수")
-        reserved_at = serializers.DateTimeField(source="reservation.reserved_at", label="예약 일시")
-        updated_reserved_at = serializers.DateTimeField(source="reservation.updated_at", label="예약 수정 일시")
-        expired_at = serializers.DateTimeField(source="customer_ticket.expired_at", label="만료 일시")
-        is_attended = serializers.BooleanField(source="reservation.is_attended", label="출석 여부")
+        id = serializers.IntegerField(label="고객 티켓 사용 로그 아이디")
+        ticket_type = serializers.CharField(label="티켓 타입", source="customer_ticket.ticket.ticket_type")
+        usage_time = serializers.IntegerField(label="사용 가능한 시간", source="customer_ticket.ticket.usage_time")
+        usage_count = serializers.IntegerField(label="사용 가능한 횟수", source="customer_ticket.ticket.usage_count")
+        used_count = serializers.IntegerField(label="사용한 횟수")
+        unused_count = serializers.IntegerField(label="잔여 횟수", source="customer_ticket.unused_count")
+        is_attended = serializers.BooleanField(label="출석 여부", source="reservation.is_attended")
+        reserved_at = serializers.DateTimeField(label="예약 일시", source="reservation.reserved_at")
+        expired_at = serializers.DateTimeField(label="만료 일시", source="customer_ticket.expired_at")
+        reservation_status = serializers.CharField(label="예약 상태", source="reservation.reservation_status")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._pet_kindergarden_selector = CustomerContainer.pet_kindergarden_selector()
         self._customer_selector = CustomerContainer.customer_selector()
-        self._customer_ticket_reservation_selector = CustomerContainer.customer_ticket_reservation_selector()
+        self._customer_ticket_usage_log_selector = CustomerContainer.customer_ticket_usage_log_selector()
 
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
@@ -470,23 +469,23 @@ class CustomerTicketLogListAPI(APIAuthMixin, APIView):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         check_object_or_not_found(
-            self._customer_selector.check_is_exists_customer_by_id(customer_id=customer_id),
+            self._customer_selector.exists_by_id(customer_id=customer_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER"),
             code=SYSTEM_CODE.code("NOT_FOUND_CUSTOMER"),
         )
-        customer_ticket_reservation = (
-            self._customer_ticket_reservation_selector.get_customer_ticket_reservation_list_by_customer_id(
+        customer_ticket_usage_log = (
+            self._customer_ticket_usage_log_selector.get_queryset_by_customer_id_for_ticket_usage_logs(
                 customer_id=customer_id,
             )
         )
-        pagination_customer_ticket_reservation_data = get_paginated_data(
+        pagination_customer_ticket_usage_log_data = get_paginated_data(
             pagination_class=self.Pagination,
             serializer_class=self.OutputSerializer,
-            queryset=customer_ticket_reservation,
+            queryset=customer_ticket_usage_log,
             request=request,
             view=self,
         )
         return Response(
-            data=pagination_customer_ticket_reservation_data,
+            data=pagination_customer_ticket_usage_log_data,
             status=status.HTTP_200_OK,
         )

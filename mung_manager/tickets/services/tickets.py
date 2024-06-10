@@ -41,8 +41,8 @@ class TicketService(AbstractTicketService):
 
         Args:
             pet_kindergarden_id: 반려동물 유치원 아이디입니다.
-            usage_time: 사용 가능 시간입니다.
-            usage_count: 사용횟수입니다.
+            usage_time: 사용 가능한 시간입니다.
+            usage_count: 사용 가능한 횟수입니다.
             usage_period_in_days_count: 사용기간 횟수입니다.
             price: 가격입니다.
             ticket_type: 티켓 타입입니다.
@@ -51,7 +51,7 @@ class TicketService(AbstractTicketService):
             Ticket: 티켓 객체입니다.
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -83,7 +83,7 @@ class TicketService(AbstractTicketService):
             Ticket: 티켓 객체입니다.
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -91,7 +91,7 @@ class TicketService(AbstractTicketService):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         ticket = get_object_or_not_found(
-            self._ticket_selector.get_ticket_by_id(ticket_id=ticket_id),
+            self._ticket_selector.get_by_id(ticket_id=ticket_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_TICKET"),
             code=SYSTEM_CODE.code("NOT_FOUND_TICKET"),
         )

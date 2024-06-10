@@ -17,6 +17,7 @@ class IsPartnerPermission(permissions.BasePermission):
             bool: 유저의 권한이 사장님이면 True, 아니면 False를 반환
         """
         try:
+            # @TODO: Fixed Type
             if request.user.groups.first().id == AuthGroup.PARTNER.value:  # type: ignore
                 return True
 

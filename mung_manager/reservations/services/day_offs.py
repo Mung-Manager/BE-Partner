@@ -1,6 +1,11 @@
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
+from django.forms.models import model_to_dict
 
 from mung_manager.common.constants import SYSTEM_CODE
+from mung_manager.common.models import DeletedRecord
 from mung_manager.common.selectors import (
     check_object_or_already_exist,
     check_object_or_not_found,
@@ -38,7 +43,7 @@ class DayOffService(AbstractDayOffService):
             DayOff: 휴무일 객체
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -46,7 +51,7 @@ class DayOffService(AbstractDayOffService):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         check_object_or_already_exist(
-            self._day_off_selector.check_is_exists_day_off_by_day_off_at_and_pet_kindergarden_id(
+            self._day_off_selector.exists_by_day_off_at_and_pet_kindergarden_id(
                 day_off_at=day_off_at,
                 pet_kindergarden_id=pet_kindergarden_id,
             ),
@@ -72,7 +77,7 @@ class DayOffService(AbstractDayOffService):
             None
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -80,10 +85,18 @@ class DayOffService(AbstractDayOffService):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         day_off = get_object_or_not_found(
-            self._day_off_selector.get_day_off_by_id(
+            self._day_off_selector.get_by_id(
                 day_off_id=day_off_id,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_DAY_OFF"),
             code=SYSTEM_CODE.code("NOT_FOUND_DAY_OFF"),
         )
+
+        day_off_data = model_to_dict(day_off)
+        DeletedRecord.objects.create(
+            original_table=DayOff.__name__,
+            original_id=day_off.id,
+            data=json.dumps(day_off_data, cls=DjangoJSONEncoder),
+        )
+
         day_off.delete()

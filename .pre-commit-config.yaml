@@ -5,6 +5,8 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-merge-conflict
 
   - repo: https://github.com/PyCQA/flake8
     rev: 6.1.0
@@ -34,6 +36,21 @@ repos:
     hooks:
       - id: isort
         args: ['--profile', 'black', '--filter-files', 'true']
+
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.8
+    hooks:
+      - id: bandit
+        args: ['--skip', 'B101,B110']
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy --config mypy.ini mung_manager/
+        always_run: true
+        pass_filenames: false
+        language: system
+        types: [python]
 
 default_language_version:
   python: python3.11

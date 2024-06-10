@@ -3,7 +3,7 @@ from rest_framework import status
 from mung_manager.common.base.exceptions import BaseAPIException
 from mung_manager.common.constants import SYSTEM_CODE
 
-ExternalExceptions = []
+ExternalExceptions: list[type[Exception]] = []
 
 
 class InvalidParameterFormatException(BaseAPIException):

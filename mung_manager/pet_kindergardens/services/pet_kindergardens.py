@@ -40,12 +40,14 @@ class PetKindergardenService(AbstractPetKindergardenService):
         response = requests.get(
             url="https://dapi.kakao.com/v2/local/search/address.json",
             headers={"Authorization": f"KakaoAK {settings.KAKAO_API_KEY}"},
+            # @TODO: Fixed Type
             params={  # type: ignore
                 "analyze_type": "exact",
                 "query": road_address,
                 "page": 1,
                 "size": 1,
             },
+            timeout=3,
         )
         if response.status_code != 200:
             raise AuthenticationFailedException(
@@ -104,7 +106,7 @@ class PetKindergardenService(AbstractPetKindergardenService):
             PetKindergarden: 반려동물 유치원 객체
         """
         check_object_or_already_exist(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_user(user),
+            self._pet_kindergarden_selector.exists_by_user(user),
             msg=SYSTEM_CODE.message("ALREADY_EXISTS_USER_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("ALREADY_EXISTS_USER_PET_KINDERGARDEN"),
         )
@@ -179,7 +181,7 @@ class PetKindergardenService(AbstractPetKindergardenService):
             PetKindergarden: 반려동물 유치원 객체
         """
         pet_kindergarden = get_object_or_not_found(
-            self._pet_kindergarden_selector.get_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.get_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),

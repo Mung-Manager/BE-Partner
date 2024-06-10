@@ -5,12 +5,13 @@ from rest_framework import status
 from mung_manager.common.base.api_managers import BaseAPIManager
 from mung_manager.pet_kindergardens.apis.reservations.apis import (
     ReservationCalendarListAPI,
-    ReservationCreateAPI,
+    ReservationCancelAPI,
     ReservationCustomerPetListAPI,
     ReservationCustomerTicketListAPI,
     ReservationDayOffCreateAPI,
     ReservationDayOffDeleteAPI,
     ReservationListAPI,
+    ReservationRegisterAPI,
     ReservationToggleAttendanceAPI,
 )
 from mung_manager.schemas.errors.authentications import (
@@ -29,12 +30,27 @@ from mung_manager.schemas.errors.commons import (
     ErrorPermissionDeniedSchema,
     ErrorUnknownServerSchema,
 )
+from mung_manager.schemas.errors.customers import (
+    ErrorCustomerNotFoundSchema,
+    ErrorCustomerPetOverDailyLimitSchema,
+    ErrorCustomerTicketConflictSchema,
+    ErrorCustomerTicketExpiredSchema,
+    ErrorCustomerTicketInvalidExpiredAtSchema,
+    ErrorCustomerTicketNoCountSchema,
+    ErrorCustomerTicketNotFoundSchema,
+)
 from mung_manager.schemas.errors.pet_kindergardens import (
+    ErrorPetKindergardenClosedSchema,
+    ErrorPetKindergardenInvalidBusinessHourSchema,
     ErrorPetKindergardenNotFoundSchema,
 )
 from mung_manager.schemas.errors.reservations import (
     ErrorDayOffNotFoundSchema,
+    ErrorReservationAlreadyExistsCustomerPetSchema,
     ErrorReservationNotFoundSchema,
+    ErrorReservationTimeTicketTypeAllDaySchema,
+    ErrorReservationTimeTicketTypeHotelSchema,
+    ErrorReservationTimeTicketTypeTimeSchema,
 )
 
 
@@ -218,7 +234,7 @@ class ReservationDayOffDetailAPIManager(BaseAPIManager):
 class ReservationListAPIManager(BaseAPIManager):
     VIEWS_BY_METHOD = {
         "GET": ReservationListAPI.as_view,
-        "POST": ReservationCreateAPI.as_view,
+        "POST": ReservationRegisterAPI.as_view,
     }
 
     @extend_schema(
@@ -288,6 +304,17 @@ class ReservationListAPIManager(BaseAPIManager):
                 response=OpenApiTypes.OBJECT,
                 examples=[
                     ErrorInvalidParameterFormatSchema,
+                    ErrorCustomerPetOverDailyLimitSchema,
+                    ErrorPetKindergardenClosedSchema,
+                    ErrorReservationAlreadyExistsCustomerPetSchema,
+                    ErrorCustomerTicketExpiredSchema,
+                    ErrorCustomerTicketInvalidExpiredAtSchema,
+                    ErrorReservationTimeTicketTypeAllDaySchema,
+                    ErrorReservationTimeTicketTypeHotelSchema,
+                    ErrorReservationTimeTicketTypeTimeSchema,
+                    ErrorPetKindergardenInvalidBusinessHourSchema,
+                    ErrorCustomerTicketNoCountSchema,
+                    ErrorCustomerTicketConflictSchema,
                 ],
             ),
             status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
@@ -314,6 +341,8 @@ class ReservationListAPIManager(BaseAPIManager):
                 response=OpenApiTypes.OBJECT,
                 examples=[
                     ErrorPetKindergardenNotFoundSchema,
+                    ErrorCustomerNotFoundSchema,
+                    ErrorCustomerTicketNotFoundSchema,
                 ],
             ),
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
@@ -489,3 +518,63 @@ class ReservationCustomerTicketListAPIManager(BaseAPIManager):
     )
     def get(self, request, *args, **kwargs):
         return self.VIEWS_BY_METHOD["GET"]()(request, *args, **kwargs)
+
+
+class ReservationDetailAPIManager(BaseAPIManager):
+    VIEWS_BY_METHOD = {
+        "DELETE": ReservationCancelAPI.as_view,
+    }
+
+    @extend_schema(
+        tags=["반려동물 유치원-예약"],
+        summary="반려동물 유치원 예약 삭제",
+        description="""
+        Rogic
+            - 유저가 반려동물 유치원 예약을 삭제합니다.
+        """,
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiTypes.NONE,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorInvalidParameterFormatSchema,
+                    ErrorCustomerTicketConflictSchema,
+                ],
+            ),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorAuthenticationFailedSchema,
+                    ErrorNotAuthenticatedSchema,
+                    ErrorInvalidTokenSchema,
+                    ErrorAuthorizationHeaderSchema,
+                    ErrorAuthenticationPasswordChangedSchema,
+                    ErrorAuthenticationUserDeletedSchema,
+                    ErrorAuthenticationUserInactiveSchema,
+                    ErrorAuthenticationUserNotFoundSchema,
+                    ErrorTokenIdentificationSchema,
+                ],
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorPermissionDeniedSchema,
+                ],
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorReservationNotFoundSchema,
+                    ErrorPetKindergardenNotFoundSchema,
+                ],
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    ErrorUnknownServerSchema,
+                ],
+            ),
+        },
+    )
+    def delete(self, request, *args, **kwargs):
+        return self.VIEWS_BY_METHOD["DELETE"]()(request, *args, **kwargs)

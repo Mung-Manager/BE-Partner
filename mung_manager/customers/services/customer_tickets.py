@@ -8,9 +8,10 @@ from mung_manager.common.selectors import (
     check_object_or_not_found,
     get_object_or_not_found,
 )
-from mung_manager.customers.models import CustomerTicket
+from mung_manager.customers.models import CustomerTicket, CustomerTicketRegistrationLog
 from mung_manager.customers.selectors.customers import CustomerSelector
 from mung_manager.customers.services.abstracts import AbstractCustomerTicketService
+from mung_manager.errors.exceptions import ValidationException
 from mung_manager.pet_kindergardens.selectors.pet_kindergardens import (
     PetKindergardenSelector,
 )
@@ -32,7 +33,7 @@ class CustomerTicketService(AbstractCustomerTicketService):
 
     @transaction.atomic
     def register_ticket(self, user, customer_id: int, pet_kindergarden_id: int, ticket_id: int) -> CustomerTicket:
-        """이 함수는 고객의 티켓을 검증 후 등록합니다.
+        """이 함수는 고객의 티켓을 검증 후 등록 후 로그를 남깁니다.
 
         Args:
             user: 유저 객체
@@ -44,20 +45,27 @@ class CustomerTicketService(AbstractCustomerTicketService):
             CustomerTicket: 고객의 티켓 객체
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        check_object_or_not_found(
-            self._customer_selector.check_is_exists_customer_by_id(customer_id=customer_id),
+        customer = get_object_or_not_found(
+            self._customer_selector.get_by_id(customer_id=customer_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER"),
             code=SYSTEM_CODE.code("NOT_FOUND_CUSTOMER"),
         )
+
+        if customer.is_active is False:
+            raise ValidationException(
+                detail=SYSTEM_CODE.message("INACTIVE_CUSTOMER"),
+                code=SYSTEM_CODE.code("INACTIVE_CUSTOMER"),
+            )
+
         ticket = get_object_or_not_found(
-            self._ticket_selector.get_undeleted_ticket_by_id(ticket_id=ticket_id),
+            self._ticket_selector.get_by_pet_id_for_undeleted_ticket(ticket_id=ticket_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_TICKET"),
             code=SYSTEM_CODE.code("NOT_FOUND_TICKET"),
         )
@@ -69,6 +77,11 @@ class CustomerTicketService(AbstractCustomerTicketService):
             total_count=ticket.usage_count,
             unused_count=ticket.usage_count,
             used_count=0,
+        )
+
+        # 고객 티켓 등록 로그 생성
+        CustomerTicketRegistrationLog.objects.create(
+            customer_ticket_id=customer_ticket.id,
         )
 
         return customer_ticket

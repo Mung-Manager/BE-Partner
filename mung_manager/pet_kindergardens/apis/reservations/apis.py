@@ -64,26 +64,24 @@ class ReservationCalendarListAPI(APIAuthMixin, APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        daily_reservations = (
-            self._daily_reservation_selector.get_daily_reservations_queryset_by_year_and_month_and_pet_kindergarden_id(
-                year=filter_serializer.validated_data["year"],
-                month=filter_serializer.validated_data["month"],
-                pet_kindergarden_id=pet_kindergarden_id,
-            )
+        daily_reservations = self._daily_reservation_selector.get_queryset_by_year_and_month_and_pet_kindergarden_id(
+            year=filter_serializer.validated_data["year"],
+            month=filter_serializer.validated_data["month"],
+            pet_kindergarden_id=pet_kindergarden_id,
         )
-        day_offs = self._day_off_selector.get_day_off_queryset_by_pet_kindergarden_id_and_day_off_at(
+        day_offs = self._day_off_selector.get_queryset_by_pet_kindergarden_id_and_day_off_at(
             pet_kindergarden_id=pet_kindergarden_id,
             year=filter_serializer.validated_data["year"],
             month=filter_serializer.validated_data["month"],
         )
-        korea_special_days = self._korea_special_day_selector.get_korea_special_day_queryset_by_year_and_month(
+        korea_special_days = self._korea_special_day_selector.get_queryset_by_year_and_month(
             year=filter_serializer.validated_data["year"], month=filter_serializer.validated_data["month"]
         )
         daily_reservations_data = self.OutputSerializer(
@@ -146,7 +144,6 @@ class ReservationListAPI(APIAuthMixin, APIView):
                 "id": serializers.IntegerField(label="예약 아이디"),
                 "is_attended": serializers.BooleanField(label="출석 여부"),
                 "reserved_time": TimeFromDateTimeField(label="예약 시간", source="reserved_at"),
-                "updated_reserved_time": TimeFromDateTimeField(label="예약 수정 시간", source="updated_reserved_at"),
                 "end_time": TimeFromDateTimeField(label="퇴실 시간", source="end_at"),
                 "customer": inline_serializer(
                     label="고객 정보",
@@ -193,7 +190,6 @@ class ReservationListAPI(APIAuthMixin, APIView):
                 "id": serializers.IntegerField(label="예약 아이디"),
                 "is_attended": serializers.BooleanField(label="출석 여부"),
                 "reserved_at": DateFromDateTimeField(label="예약 날짜"),
-                "updated_reserved_at": DateFromDateTimeField(label="예약 수정 시간"),
                 "end_at": DateFromDateTimeField(label="퇴실 날짜"),
                 "customer": inline_serializer(
                     label="고객 정보",
@@ -221,14 +217,14 @@ class ReservationListAPI(APIAuthMixin, APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        reservations = self._reservation_selector.get_reservation_list(
+        reservations = self._reservation_selector.get_queryset_for_ticket_type_uncanceld_reservations(
             pet_kindergarden_id=pet_kindergarden_id,
             reserved_at=filter_serializer.validated_data["reserved_at"],
         )
@@ -290,14 +286,14 @@ class ReservationCustomerPetListAPI(APIAuthMixin, APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        customer_pets = self._customer_pet_selector.get_customer_pet_list_by_keyword_for_reservation(
+        customer_pets = self._customer_pet_selector.get_by_keyword_for_search(
             keyword=filter_serializer.validated_data["keyword"],
         )
         pagination_customer_pets_data = get_paginated_data(
@@ -319,8 +315,8 @@ class ReservationCustomerTicketListAPI(APIAuthMixin, APIView):
             fields={
                 "id": serializers.IntegerField(label="고객 티켓 아이디"),
                 "expired_at": serializers.DateTimeField(label="만료 시간"),
-                "unused_count": serializers.IntegerField(label="사용 가능 횟수"),
-                "usage_time": serializers.IntegerField(label="사용 가능 시간", source="ticket.usage_time"),
+                "unused_count": serializers.IntegerField(label="잔여 횟수"),
+                "usage_time": serializers.IntegerField(label="사용 가능한 시간", source="ticket.usage_time"),
             },
         )
         all_day = inline_serializer(
@@ -329,7 +325,7 @@ class ReservationCustomerTicketListAPI(APIAuthMixin, APIView):
             fields={
                 "id": serializers.IntegerField(label="고객 티켓 아이디"),
                 "expired_at": serializers.DateTimeField(label="만료 시간"),
-                "unused_count": serializers.IntegerField(label="사용 가능 횟수"),
+                "unused_count": serializers.IntegerField(label="잔여 횟수"),
             },
         )
         hotel = inline_serializer(
@@ -338,7 +334,7 @@ class ReservationCustomerTicketListAPI(APIAuthMixin, APIView):
             fields={
                 "id": serializers.IntegerField(label="고객 티켓 아이디"),
                 "expired_at": serializers.DateTimeField(label="만료 시간"),
-                "unused_count": serializers.IntegerField(label="사용 가능 횟수"),
+                "unused_count": serializers.IntegerField(label="잔여 횟수"),
             },
         )
 
@@ -349,23 +345,26 @@ class ReservationCustomerTicketListAPI(APIAuthMixin, APIView):
 
     def get(self, request: Request, pet_kindergarden_id: int, customer_id: int) -> Response:
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        customer_tickets = self._customer_ticket_selector.get_customer_ticket_list_by_customer_id_for_reservation(
+        customer_tickets = self._customer_ticket_selector.get_queryset_by_customer_id_for_ticket_type(
             customer_id=customer_id,
         )
         customer_tickets_data = self.OutputSerializer(customer_tickets).data
         return Response(data=customer_tickets_data, status=status.HTTP_200_OK)
 
 
-class ReservationCreateAPI(APIAuthMixin, APIView):
+class ReservationRegisterAPI(APIAuthMixin, APIView):
     class InputSerializer(BaseSerializer):
-        customer_ticket_id = serializers.IntegerField(required=True, help_text="고객 티켓 아이디")
+        # @TODO: Fixed Type
+        customer_ticket_ids = serializers.ListSerializer(
+            child=serializers.IntegerField(), required=True, help_text="고객 티켓 아이디"
+        )  # type: ignore
         customer_id = serializers.IntegerField(required=True, help_text="고객 아이디")
         customer_pet_id = serializers.IntegerField(required=True, help_text="고객 반려동물 아이디")
         reserved_at = serializers.DateTimeField(
@@ -387,9 +386,9 @@ class ReservationCreateAPI(APIAuthMixin, APIView):
     def post(self, request: Request, pet_kindergarden_id: int) -> Response:
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        reservation = self._reservation_service.create_reservation(
+        reservation = self._reservation_service.register_reservation(
             pet_kindergarden_id=pet_kindergarden_id,
-            customer_ticket_id=input_serializer.validated_data["customer_ticket_id"],
+            customer_ticket_ids=input_serializer.validated_data["customer_ticket_ids"],
             customer_id=input_serializer.validated_data["customer_id"],
             customer_pet_id=input_serializer.validated_data["customer_pet_id"],
             reserved_at=input_serializer.validated_data["reserved_at"],
@@ -398,3 +397,17 @@ class ReservationCreateAPI(APIAuthMixin, APIView):
         )
         reservation_data = self.OutputSerializer(reservation).data
         return Response(data=reservation_data, status=status.HTTP_201_CREATED)
+
+
+class ReservationCancelAPI(APIAuthMixin, APIView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._reservation_service = ReservationContainer.reservation_service()
+
+    def delete(self, request: Request, pet_kindergarden_id: int, reservation_id: int) -> Response:
+        self._reservation_service.cancel_reservation(
+            pet_kindergarden_id=pet_kindergarden_id,
+            reservation_id=reservation_id,
+            user=request.user,
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

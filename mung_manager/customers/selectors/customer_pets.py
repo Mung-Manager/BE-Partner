@@ -10,7 +10,7 @@ from mung_manager.customers.selectors.abstracts import AbstractCustomerPetSelect
 class CustomerPetSelector(AbstractCustomerPetSelector):
     """이 클래스는 고객 반려동물을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
-    def get_undeleted_customer_pet_queryset_by_names_and_customer_id(
+    def get_queryset_by_names_and_customer_id_for_undeleted_customer_pet(
         self, names: List[str], customer_id: int
     ) -> QuerySet[CustomerPet]:
         """고객 반려동물 아이디로 삭제되지 않은 고객 반려동물을 가져옵니다.
@@ -28,9 +28,7 @@ class CustomerPetSelector(AbstractCustomerPetSelector):
             deleted_at__isnull=True,
         )
 
-    def check_is_exists_undeleted_customer_pet_by_names_and_customer_id(
-        self, names: List[str], customer_id: int
-    ) -> bool:
+    def exists_by_names_and_customer_id_for_undeleted_customer_pet(self, names: List[str], customer_id: int) -> bool:
         """반려동물 이름들과 고객 아이디로 삭제되지 않은 고객 반려동물이 존재하는지 확인합니다.
 
         Args:
@@ -47,7 +45,7 @@ class CustomerPetSelector(AbstractCustomerPetSelector):
             deleted_at__isnull=True,
         ).exists()
 
-    def get_customer_pet_list_by_keyword_for_reservation(self, keyword: str) -> QuerySet[CustomerPet]:
+    def get_by_keyword_for_search(self, keyword: str) -> QuerySet[CustomerPet]:
         """이 함수는 키워드로 고객을 포함한 삭제되지 않은 고객 반려동물 조회합니다.
         키워드는 고객 이름, 고객 전화번호, 고객 반려동물 이름을 검색합니다.
 

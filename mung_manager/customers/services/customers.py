@@ -62,7 +62,7 @@ class CustomerService(AbstractCustomerService):
             Customer: 고객 객체
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -70,7 +70,7 @@ class CustomerService(AbstractCustomerService):
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
         check_object_or_already_exist(
-            self._customer_selector.check_is_exists_customer_by_pet_kindergarden_id_and_phone_number(
+            self._customer_selector.exists_by_pet_kindergarden_id_and_phone_number(
                 pet_kindergarden_id=pet_kindergarden_id,
                 phone_number=phone_number,
             ),
@@ -104,7 +104,7 @@ class CustomerService(AbstractCustomerService):
             QuerySet[Customer]: 고객 객체
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -158,7 +158,7 @@ class CustomerService(AbstractCustomerService):
         csv_file.close()
 
         # 전화번호로 기존 고객이 존재하는지 검증
-        original_customer_phone_number_instances = self._customer_selector.get_customer_queryset_by_pet_kindergarden_id(
+        original_customer_phone_number_instances = self._customer_selector.get_queryset_by_pet_kindergarden_id(
             pet_kindergarden_id=pet_kindergarden_id
         ).values_list("phone_number", flat=True)
 
@@ -188,7 +188,7 @@ class CustomerService(AbstractCustomerService):
             Customer: 고객 객체
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -198,7 +198,7 @@ class CustomerService(AbstractCustomerService):
 
         # 고객이 존재하는지 검증
         customer = get_object_or_not_found(
-            self._customer_selector.get_customer_by_id(customer_id=customer_id),
+            self._customer_selector.get_by_id(customer_id=customer_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER"),
             code=SYSTEM_CODE.code("NOT_FOUND_CUSTOMER"),
         )
@@ -238,7 +238,7 @@ class CustomerService(AbstractCustomerService):
             Customer: 고객 객체
         """
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=user,
             ),
@@ -248,7 +248,7 @@ class CustomerService(AbstractCustomerService):
 
         # 고객이 존재하는지 검증
         customer = get_object_or_not_found(
-            self._customer_selector.get_customer_by_id(customer_id=customer_id),
+            self._customer_selector.get_by_id(customer_id=customer_id),
             msg=SYSTEM_CODE.message("NOT_FOUND_CUSTOMER"),
             code=SYSTEM_CODE.code("NOT_FOUND_CUSTOMER"),
         )
@@ -267,7 +267,7 @@ class CustomerService(AbstractCustomerService):
         # 고객 반려동물 추가/삭제
         if len(pets_to_add) > 0:
             check_object_or_already_exist(
-                self._customer_pet_selector.check_is_exists_undeleted_customer_pet_by_names_and_customer_id(
+                self._customer_pet_selector.exists_by_names_and_customer_id_for_undeleted_customer_pet(
                     names=pets_to_add, customer_id=customer_id
                 ),
                 msg=SYSTEM_CODE.message("ALREADY_EXISTS_CUSTOMER_PET"),
@@ -278,7 +278,7 @@ class CustomerService(AbstractCustomerService):
 
         if len(pets_to_delete) > 0:
             pets_to_be_deleted = (
-                self._customer_pet_selector.get_undeleted_customer_pet_queryset_by_names_and_customer_id(
+                self._customer_pet_selector.get_queryset_by_names_and_customer_id_for_undeleted_customer_pet(
                     names=pets_to_delete, customer_id=customer_id
                 )
             )
@@ -291,5 +291,5 @@ class CustomerService(AbstractCustomerService):
 
             pets_to_be_deleted.update(is_deleted=True, deleted_at=timezone.now())
 
-        customer = self._customer_selector.get_customer_with_undeleted_customer_pet_by_id(customer_id=customer_id)
+        customer = self._customer_selector.get_with_undeleted_customer_pet_by_id(customer_id=customer_id)
         return customer

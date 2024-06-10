@@ -71,8 +71,8 @@ class CustomerTicket(TimeStampedModel):
     )
     expired_at = models.DateTimeField(db_comment="만료 시간")
     total_count = models.IntegerField(db_comment="총 횟수")
-    used_count = models.IntegerField(db_comment="사용 횟수")
-    unused_count = models.IntegerField(db_comment="사용 가능 횟수")
+    used_count = models.IntegerField(db_comment="사용한 횟수")
+    unused_count = models.IntegerField(db_comment="잔여 횟수")
     version = IntegerVersionField(db_comment="버전")
     ticket = models.ForeignKey(
         Ticket,
@@ -91,26 +91,46 @@ class CustomerTicket(TimeStampedModel):
         db_table = "customer_ticket"
 
 
-class CustomerTicketReservation(TimeStampedModel):
+class CustomerTicketUsageLog(TimeStampedModel):
     id = models.AutoField(
         auto_created=True,
         primary_key=True,
-        db_column="customer_ticket_reservation_id",
+        db_column="customer_ticket_usage_log_id",
         serialize=False,
-        db_comment="고객 티켓 예약 아이디",
+        db_comment="고객 티켓 사용 로그 아이디",
     )
+    used_count = models.IntegerField(db_comment="사용한 횟수")
     customer_ticket = models.ForeignKey(
         CustomerTicket,
         on_delete=models.CASCADE,
-        related_name="customer_ticket_reservations",
+        related_name="customer_ticket_usage_logs",
         db_comment="고객 티켓 아이디",
     )
     reservation = models.ForeignKey(
         Reservation,
         on_delete=models.CASCADE,
-        related_name="customer_ticket_reservations",
+        related_name="customer_ticket_usage_logs",
         db_comment="예약 아이디",
     )
 
     class Meta:
-        db_table = "customer_ticket_reservation"
+        db_table = "customer_ticket_usage_log"
+
+
+class CustomerTicketRegistrationLog(TimeStampedModel):
+    id = models.AutoField(
+        auto_created=True,
+        primary_key=True,
+        db_column="customer_ticket_registration_log_id",
+        serialize=False,
+        db_comment="고객 티켓 등록 로그 아이디",
+    )
+    customer_ticket = models.ForeignKey(
+        CustomerTicket,
+        on_delete=models.CASCADE,
+        related_name="customer_ticket_logs",
+        db_comment="고객 티켓 아이디",
+    )
+
+    class Meta:
+        db_table = "customer_ticket_registration_log"

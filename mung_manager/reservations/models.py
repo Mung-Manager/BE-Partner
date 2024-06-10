@@ -14,7 +14,6 @@ class Reservation(TimeStampedModel):
     )
     is_attended = models.BooleanField(db_comment="출석 여부", null=True)
     reserved_at = models.DateTimeField(db_comment="예약 시간")
-    updated_reserved_at = models.DateTimeField(db_comment="예약 수정 시간", null=True)
     end_at = models.DateTimeField(db_comment="퇴실 시간", null=True)
     reservation_status = models.CharField(
         max_length=8,
@@ -32,6 +31,7 @@ class Reservation(TimeStampedModel):
         db_comment="노드 깊이",
         default=0,
     )
+    is_extented = models.BooleanField(db_comment="고객 티켓 연장 여부", default=False)
     customer = models.ForeignKey(
         "customers.Customer",
         on_delete=models.CASCADE,

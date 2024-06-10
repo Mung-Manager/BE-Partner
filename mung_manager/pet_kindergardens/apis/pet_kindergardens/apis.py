@@ -239,7 +239,7 @@ class PetKindergardenDetailAPI(APIAuthMixin, APIView):
 
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:
         pet_kindergarden = get_object_or_not_found(
-            self._pet_kindergarden_selector.get_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.get_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
@@ -278,7 +278,7 @@ class PetKindergardenSearchAPI(APIAuthMixin, APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
 
-        raw_pet_kindergardens = self._raw_pet_kindergarden_selector.get_raw_pet_kindergarden_queryset_by_name(
+        raw_pet_kindergardens = self._raw_pet_kindergarden_selector.get_queryset_by_name(
             name=filter_serializer.validated_data["name"]
         )
 
@@ -318,7 +318,7 @@ class PetKindergardenProfileAPI(APIAuthMixin, APIView):
 
     def get(self, request: Request) -> Response:
         pet_kindergarden = get_object_or_not_found(
-            self._pet_kindergarden_selector.get_pet_kindergarden_by_user(user=request.user),
+            self._pet_kindergarden_selector.get_by_user(user=request.user),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytz
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils import timezone
@@ -53,7 +54,7 @@ class InvalidReservedAtValidator:
     code = SYSTEM_CODE.code("INVALID_RESERVED_AT")
 
     def __call__(self, value):
-        if value <= timezone.now():
+        if value.date() <= timezone.now().date() - timezone.timedelta(days=1):
             raise ValidationError(message=self.message, code=self.code)
 
 
@@ -72,6 +73,7 @@ class InvalidEndAtValidator:
     def __call__(self, value, serializer_field):
         reserved_at = serializer_field.parent.initial_data.get("reserved_at")
         if reserved_at:
-            reserved_at = datetime.fromisoformat(reserved_at)
+            reserved_at = datetime.fromisoformat(reserved_at.replace("Z", "+00:00"))
+            value = pytz.utc.localize(value)
             if value <= reserved_at:
                 raise ValidationError(message=self.message, code=self.code)

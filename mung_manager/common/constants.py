@@ -68,6 +68,18 @@ class SYSTEM_CODE:
         "already_exists_user_pet_kindergarden",
         "User already has a pet kindergarden.",
     )
+    OVER_DAILY_PET_LIMIT = (
+        "over_daily_pet_limit",
+        "The daily pet limit has been exceeded.",
+    )
+    PET_KINDERGARDEN_CLOSED = (
+        "pet_kindergarden_closed",
+        "The pet kindergarden is closed on this day.",
+    )
+    INVALID_PET_KINDERGARDEN_BUSINESS_HOUR = (
+        "validation_failed",
+        "The reservation time must be within business hours.",
+    )
 
     # Reservation code
     NOT_FOUND_DAY_OFF = ("not_found_day_off", "Day off does not exist.")
@@ -78,10 +90,22 @@ class SYSTEM_CODE:
         "Reservation already exists for customer pet.",
     )
     INVALID_RESERVED_AT = (
-        "validation_failed",
+        "invalid_reserved_at",
         "The reservation can only be scheduled for dates after the current time.",
     )
-    INVALID_END_AT = ("validation_failed", "The reservation end time must be later than the start time.")
+    INVALID_END_AT = ("invalid_end_at", "The reservation end time must be later than the start time.")
+    INVALID_RESERVATION_TIME_TICKET_TYPE_TIME = (
+        "invalid_reservation_time_ticket_type_time",
+        "The reservation time must match the ticket usage time.",
+    )
+    INVALID_RESERVATION_TIME_TICKET_TYPE_ALL_DAY = (
+        "invalid_reservation_time_ticket_type_all_day",
+        "The reservation time must be on the same day, with start at 00:00 and end at 23:59.",
+    )
+    INVALID_RESERVATION_TIME_TICKET_TYPE_HOTEL = (
+        "invalid_reservation_time_ticket_type_hotel",
+        "Reservations are not available within 1 day.",
+    )
 
     # Ticket code
     NOT_FOUND_TICKET = ("not_found_ticket", "Ticket does not exist.")
@@ -97,6 +121,7 @@ class SYSTEM_CODE:
     # Customer code
     UNIQUE_PET_NAME = ("unique_pet_name", "Customer pet names must be unique.")
     NOT_FOUND_CUSTOMER = ("not_found_customer", "Customer does not exist.")
+    INACTIVE_CUSTOMER = ("inactive_customer", "Customer is inactive.")
     NOT_FOUND_CUSTOMER_PET = (
         "not_found_customer_pet",
         "Customer pet does not exist.",
@@ -104,6 +129,14 @@ class SYSTEM_CODE:
     NOT_FOUND_CUSTOMER_TICKET = (
         "not_found_customer_ticket",
         "Customer ticket does not exist.",
+    )
+    EXPIRED_CUSTOMER_TICKET = (
+        "expired_customer_ticket",
+        "Customer ticket has expired.",
+    )
+    INVALID_CUSTOMER_TICKET_EXPIRED_AT = (
+        "invalid_customer_ticket_expired_at",
+        "The reservation date must be within the expiration date of the ticket.",
     )
     ALREADY_EXISTS_CUSTOMER = (
         "already_exists_customer",
@@ -117,10 +150,7 @@ class SYSTEM_CODE:
         "no_customer_ticket_count",
         "There are no remaining ticket counts.",
     )
-    CONFILCT_CUSTOMER_TICKET = (
-        "conflict_customer_ticket",
-        "A conflict occurred while using the ticket. Please try again.",
-    )
+    CONFILCT_CUSTOMER_TICKET = ("conflict_customer_ticket", "Reservation failed to register, please try again.")
 
     @classmethod
     def code(cls, code: str) -> str:

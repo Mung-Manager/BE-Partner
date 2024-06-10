@@ -1,8 +1,11 @@
 from dependency_injector import containers, providers
 
 from mung_manager.customers.selectors.customer_pets import CustomerPetSelector
-from mung_manager.customers.selectors.customer_ticket_reservations import (
-    CustomerTicketReservationSelector,
+from mung_manager.customers.selectors.customer_ticket_registration_logs import (
+    CustomerTicketRegistrationLogSelector,
+)
+from mung_manager.customers.selectors.customer_ticket_usage_logs import (
+    CustomerTicketUsageLogSelector,
 )
 from mung_manager.customers.selectors.customer_tickets import CustomerTicketSelector
 from mung_manager.customers.selectors.customers import CustomerSelector
@@ -21,7 +24,8 @@ class CustomerContainer(containers.DeclarativeContainer):
         pet_kindergarden_selector: 펫킨더가든 셀렉터
         customer_selector: 고객 셀렉터
         customer_ticket_selector: 고객 티켓 셀렉터
-        customer_ticket_reservation_selector: 고객 티켓 예약 셀렉터
+        customer_ticket_usage_log_selector: 고객 티켓 사용 로그 셀렉터
+        customer_ticket_registration_log_selector: 고객 티켓 등록 로그 셀렉터
         ticket_selector: 티켓 셀렉터
         reservation_selector: 예약 셀렉터
         customer_ticket_service: 고객 티켓 서비스
@@ -31,7 +35,8 @@ class CustomerContainer(containers.DeclarativeContainer):
     pet_kindergarden_selector = providers.Factory(PetKindergardenSelector)
     customer_selector = providers.Factory(CustomerSelector)
     customer_ticket_selector = providers.Factory(CustomerTicketSelector)
-    customer_ticket_reservation_selector = providers.Factory(CustomerTicketReservationSelector)
+    customer_ticket_usage_log_selector = providers.Factory(CustomerTicketUsageLogSelector)
+    customer_ticket_registration_log_selector = providers.Factory(CustomerTicketRegistrationLogSelector)
     customer_pet_selector = providers.Factory(CustomerPetSelector)
     ticket_selector = providers.Factory(TicketSelector)
     customer_ticket_service = providers.Factory(

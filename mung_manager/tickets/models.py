@@ -13,8 +13,8 @@ class Ticket(TimeStampedModel):
         serialize=False,
         db_comment="티켓 아이디",
     )
-    usage_time = models.IntegerField(db_comment="사용 가능 시간")
-    usage_count = models.IntegerField(db_comment="사용 횟수")
+    usage_time = models.IntegerField(db_comment="사용 가능한 시간")
+    usage_count = models.IntegerField(db_comment="사용 가능한 횟수")
     usage_period_in_days_count = models.IntegerField(db_comment="사용 기간(일) 횟수")
     price = models.IntegerField(db_comment="금액")
     ticket_type = models.CharField(

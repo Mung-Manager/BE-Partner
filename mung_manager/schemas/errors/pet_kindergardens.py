@@ -33,3 +33,37 @@ ErrorPetKindergardenAlreadyExistsSchema = OpenApiExample(
     status_codes=["409"],
     response_only=True,
 )
+
+ErrorPetKindergardenClosedSchema = OpenApiExample(
+    name="400(pet_kindergarden_closed)",
+    summary="[Bad Request]: Pet Kindergarden Closed",
+    description="""
+    반려동물 유치원이 휴원일일 때 반환되는 응답입니다.
+    """,
+    value={
+        "success": False,
+        "statusCode": 400,
+        "code": "pet_kindergarden_closed",
+        "message": "The pet kindergarden is closed on this day.",
+        "data": {},
+    },
+    status_codes=["400"],
+    response_only=True,
+)
+
+ErrorPetKindergardenInvalidBusinessHourSchema = OpenApiExample(
+    name="400(invalid_pet_kindergarden_business_hour)",
+    summary="[Bad Request]: Invalid Pet Kindergarden Business Hour",
+    description="""
+    반려동물 유치원의 영업시간이 잘못되었을 때 반환되는 응답입니다.
+    """,
+    value={
+        "success": False,
+        "statusCode": 400,
+        "code": "invalid_pet_kindergarden_business_hour",
+        "message": "Invalid Pet Kindergarden Business Hour.",
+        "data": {},
+    },
+    status_codes=["400"],
+    response_only=True,
+)

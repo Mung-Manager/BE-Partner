@@ -13,6 +13,8 @@ from mung_manager.files.utils import bytes_to_mib
 class FileUploadService(AbstractFileUploadService):
     """이 클래스는 파일 업로드와 관련된 비즈니스 로직을 담당합니다."""
 
+    MAX_TRY_COUNT = 3
+
     def __init__(self, file_obj, resource_type, user_id):
         self.file_obj = file_obj
         self.resource_type = resource_type
@@ -73,12 +75,19 @@ class FileUploadService(AbstractFileUploadService):
             # 파일 업로드 경로 설정
             upload_path = self._get_resource_path()
 
-            # 파일 업로드
+            # 파일 업로드 (최대 3회 시도)
             # @TODO: Celery로 비동기 처리
-            default_storage.save(upload_path, self.file_obj)
+            for attempt in range(1, self.MAX_TRY_COUNT + 1):
+                try:
+                    default_storage.save(upload_path, self.file_obj)
+                    break
+                except Exception as e:
+                    if attempt < self.MAX_TRY_COUNT:
+                        continue
+                    else:
+                        raise ValidationException(str(e))
 
             return settings.AWS_S3_URL + "/" + upload_path
 
         except Exception as e:
-            # @TODO: 슬랙 알림 추가
             raise ValidationException(str(e))

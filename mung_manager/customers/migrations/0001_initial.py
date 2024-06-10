@@ -3,6 +3,7 @@
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
+import concurrency.fields
 
 
 class Migration(migrations.Migration):
@@ -54,27 +55,16 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, db_column='customer_ticket_id', db_comment='고객 티켓 아이디', primary_key=True, serialize=False)),
                 ('expired_at', models.DateTimeField(db_comment='만료 시간')),
                 ('total_count', models.IntegerField(db_comment='총 횟수')),
-                ('used_count', models.IntegerField(db_comment='사용 횟수')),
-                ('unused_count', models.IntegerField(db_comment='사용 가능 횟수')),
+                ('used_count', models.IntegerField(db_comment='사용한 횟수')),
+                ('unused_count', models.IntegerField(db_comment='잔여 횟수')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
+                ('version', concurrency.fields.IntegerVersionField(default=0, db_comment='버전')),
                 ('customer', models.ForeignKey(db_comment='고객 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='customer_tickets', to='customers.customer')),
                 ('ticket', models.ForeignKey(db_comment='티켓 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='customer_tickets', to='tickets.ticket')),
             ],
             options={
                 'db_table': 'customer_ticket',
-            },
-        ),
-        migrations.CreateModel(
-            name='CustomerTicketReservation',
-            fields=[
-                ('id', models.AutoField(auto_created=True, db_column='customer_ticket_reservation_id', db_comment='고객 티켓 예약 아이디', primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_comment='생성 일시')),
-                ('updated_at', models.DateTimeField(auto_now=True, db_comment='수정 일시')),
-                ('customer_ticket', models.ForeignKey(db_comment='고객 티켓 아이디', on_delete=django.db.models.deletion.CASCADE, related_name='customer_ticket_reservations', to='customers.customerticket')),
-            ],
-            options={
-                'db_table': 'customer_ticket_reservation',
             },
         ),
     ]

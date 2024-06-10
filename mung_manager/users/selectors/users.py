@@ -7,7 +7,7 @@ from mung_manager.users.selectors.abstracts import AbstractUserSelector
 class UserSelector(AbstractUserSelector):
     """이 클래스는 유저를 DB에 PULL하는 비즈니스 로직을 담당합니다."""
 
-    def get_user_by_social_id(self, social_id: str) -> Optional[User]:
+    def get_by_social_id(self, social_id: str) -> Optional[User]:
         """이 함수는 소셜 아이디로 유저를 조회합니다.
 
         Args:
@@ -21,7 +21,7 @@ class UserSelector(AbstractUserSelector):
         except User.DoesNotExist:
             return None
 
-    def check_is_exists_user_by_email_excluding_self(self, user, email: Optional[str] = None) -> bool:
+    def exists_by_email_excluding_self(self, user, email: Optional[str] = None) -> bool:
         """이 함수는 이메일로 자신을 제외한 유저를 조회합니다.
 
         Args:

@@ -53,7 +53,7 @@ class UserService(AbstractUserService):
                 code=SYSTEM_CODE.code("NOT_AUTHENTICATED_KAKAO_PHONE_NUMBER"),
             )
 
-        user = self._user_selector.get_user_by_social_id(social_id)
+        user = self._user_selector.get_by_social_id(social_id)
 
         # 전화번호가 변경되었을 경우 업데이트
         if user is not None and user.phone_number != phone_number:
@@ -84,7 +84,7 @@ class UserService(AbstractUserService):
             User: 유저 객체
         """
         # 이메일 중복 확인
-        if self._user_selector.check_is_exists_user_by_email_excluding_self(email=data["email"], user=user):
+        if self._user_selector.exists_by_email_excluding_self(email=data["email"], user=user):
             raise AlreadyExistsException(
                 detail=SYSTEM_CODE.message("ALREADY_EXISTS_EMAIL"),
                 code=SYSTEM_CODE.code("ALREADY_EXISTS_EMAIL"),

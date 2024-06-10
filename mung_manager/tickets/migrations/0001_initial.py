@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             name='Ticket',
             fields=[
                 ('id', models.AutoField(auto_created=True, db_column='ticket_id', db_comment='티켓 아이디', primary_key=True, serialize=False)),
-                ('usage_time', models.IntegerField(db_comment='사용 가능 시간')),
-                ('usage_count', models.IntegerField(db_comment='사용 횟수')),
+                ('usage_time', models.IntegerField(db_comment='사용 가능한 시간')),
+                ('usage_count', models.IntegerField(db_comment='사용 가능한 횟수')),
                 ('usage_period_in_days_count', models.IntegerField(db_comment='사용 기간(일) 횟수')),
                 ('price', models.IntegerField(db_comment='금액')),
                 ('ticket_type', models.CharField(choices=[('시간', 'TIME'), ('종일', 'ALL_DAY'), ('호텔', 'HOTEL')], db_comment='티켓 타입', max_length=32)),

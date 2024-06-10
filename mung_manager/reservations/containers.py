@@ -1,6 +1,9 @@
 from dependency_injector import containers, providers
 
 from mung_manager.customers.selectors.customer_pets import CustomerPetSelector
+from mung_manager.customers.selectors.customer_ticket_usage_logs import (
+    CustomerTicketUsageLogSelector,
+)
 from mung_manager.customers.selectors.customer_tickets import CustomerTicketSelector
 from mung_manager.customers.selectors.customers import CustomerSelector
 from mung_manager.pet_kindergardens.selectors.pet_kindergardens import (
@@ -26,6 +29,7 @@ class ReservationContainer(containers.DeclarativeContainer):
         customer_selector: 고객 셀렉터
         customer_pet_selector: 고객 반려동물 셀렉터
         customer_ticket_selector: 고객 티켓 셀렉터
+        customer_ticket_usage_log_selector: 고객 티켓 사용 로그 셀렉터
         daily_reservation_selector: 일일 예약 셀렉터
         reservation_selector: 예약 셀렉터
         day_off_selector: 휴무일 셀렉터
@@ -38,6 +42,7 @@ class ReservationContainer(containers.DeclarativeContainer):
     customer_selector = providers.Factory(CustomerSelector)
     customer_pet_selector = providers.Factory(CustomerPetSelector)
     customer_ticket_selector = providers.Factory(CustomerTicketSelector)
+    customer_ticket_usage_log_selector = providers.Factory(CustomerTicketUsageLogSelector)
     daily_reservation_selector = providers.Factory(DailyReservationSelector)
     reservation_selector = providers.Factory(ReservationSelector)
     day_off_selector = providers.Factory(DayOffSelector)
@@ -51,6 +56,9 @@ class ReservationContainer(containers.DeclarativeContainer):
         ReservationService,
         customer_selector=customer_selector,
         customer_ticket_selector=customer_ticket_selector,
+        customer_ticket_usage_log_selector=customer_ticket_usage_log_selector,
+        daily_reservation_selector=daily_reservation_selector,
+        day_off_selector=day_off_selector,
         reservation_selector=reservation_selector,
         pet_kindergarden_selector=pet_kindergarden_selector,
     )

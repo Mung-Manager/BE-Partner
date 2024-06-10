@@ -14,8 +14,8 @@ from mung_manager.tickets.enums import TicketType
 class TicketListAPI(APIAuthMixin, APIView):
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time = serializers.IntegerField(label="사용 가능 시간")
-        usage_count = serializers.IntegerField(label="사용 횟수")
+        usage_time = serializers.IntegerField(label="사용 가능한 시간")
+        usage_count = serializers.IntegerField(label="사용한 횟수")
         usage_period_in_days_count = serializers.IntegerField(label="사용 기간(일) 횟수")
         price = serializers.IntegerField(label="금액")
         ticket_type = serializers.CharField(label="티켓 타입")
@@ -28,16 +28,14 @@ class TicketListAPI(APIAuthMixin, APIView):
 
     def get(self, request: Request, pet_kindergarden_id: int) -> Response:
         check_object_or_not_found(
-            self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_id_and_user(
+            self._pet_kindergarden_selector.exists_by_id_and_user(
                 pet_kindergarden_id=pet_kindergarden_id,
                 user=request.user,
             ),
             msg=SYSTEM_CODE.message("NOT_FOUND_PET_KINDERGARDEN"),
             code=SYSTEM_CODE.code("NOT_FOUND_PET_KINDERGARDEN"),
         )
-        tickets = self._ticket_selector.get_ticket_queryset_by_pet_kindergarden_id(
-            pet_kindergarden_id=pet_kindergarden_id
-        )
+        tickets = self._ticket_selector.get_queryset_by_pet_kindergarden_id(pet_kindergarden_id=pet_kindergarden_id)
         tickets_data = self.OutputSerializer(tickets, many=True).data
         return Response(data=tickets_data, status=status.HTTP_200_OK)
 
@@ -48,17 +46,17 @@ class TicketCreateAPI(APIAuthMixin, APIView):
             required=False,
             min_value=0,
             default=0,
-            label="사용 가능 시간",
+            label="사용 가능한 시간",
         )
-        usage_count = serializers.IntegerField(required=True, min_value=1, label="사용 횟수")
+        usage_count = serializers.IntegerField(required=True, min_value=1, label="사용 가능한 횟수")
         usage_period_in_days_count = serializers.IntegerField(required=True, min_value=1, label="사용 기간(일) 횟수")
         price = serializers.IntegerField(required=True, min_value=0, label="금액")
         ticket_type = serializers.ChoiceField(choices=[type.value for type in TicketType], label="티켓 타입")
 
     class OutputSerializer(BaseSerializer):
         id = serializers.IntegerField(label="티켓 아이디")
-        usage_time = serializers.IntegerField(label="사용 가능 시간")
-        usage_count = serializers.IntegerField(label="사용 횟수")
+        usage_time = serializers.IntegerField(label="사용 가능한 시간")
+        usage_count = serializers.IntegerField(label="사용 가능한 횟수")
         usage_period_in_days_count = serializers.IntegerField(label="사용 기간(일) 횟수")
         price = serializers.IntegerField(label="금액")
         ticket_type = serializers.CharField(label="티켓 타입")

@@ -9,7 +9,7 @@ from mung_manager.pet_kindergardens.selectors.abstracts import (
 class PetKindergardenSelector(AbstractPetKindergardenSelector):
     """이 클래스는 반려동물 유치원을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
-    def check_is_exists_pet_kindergarden_by_user(self, user) -> bool:
+    def exists_by_user(self, user) -> bool:
         """
         이 함수는 유저로 반려동물 유치원이 존재하는지 확인합니다.
 
@@ -21,7 +21,7 @@ class PetKindergardenSelector(AbstractPetKindergardenSelector):
         """
         return PetKindergarden.objects.filter(user=user).exists()
 
-    def get_pet_kindergarden_by_user(self, user) -> Optional[PetKindergarden]:
+    def get_by_user(self, user) -> Optional[PetKindergarden]:
         """
         이 함수는 유저로 반려동물 유치원을 조회합니다.
 
@@ -37,7 +37,7 @@ class PetKindergardenSelector(AbstractPetKindergardenSelector):
         except PetKindergarden.DoesNotExist:
             return None
 
-    def check_is_exists_pet_kindergarden_by_id_and_user(self, pet_kindergarden_id: int, user) -> bool:
+    def exists_by_id_and_user(self, pet_kindergarden_id: int, user) -> bool:
         """
         이 함수는 반려동물 유치원 아이디와 유저로 반려동물 유치원이 존재하는지 확인합니다.
 
@@ -50,7 +50,7 @@ class PetKindergardenSelector(AbstractPetKindergardenSelector):
         """
         return PetKindergarden.objects.filter(id=pet_kindergarden_id, user=user).exists()
 
-    def get_pet_kindergarden_by_id_and_user(self, pet_kindergarden_id: int, user) -> Optional[PetKindergarden]:
+    def get_by_id_and_user(self, pet_kindergarden_id: int, user) -> Optional[PetKindergarden]:
         """
         이 함수는 반려동물 유치원 아이디와 유저로 반려동물 유치원을 조회합니다.
 

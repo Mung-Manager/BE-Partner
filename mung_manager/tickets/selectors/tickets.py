@@ -9,7 +9,7 @@ from mung_manager.tickets.selectors.abstracts import AbstractTicketSelector
 class TicketSelector(AbstractTicketSelector):
     """이 클래스는 티켓을 DB에서 PULL하는 비즈니스 로직을 담당합니다."""
 
-    def get_ticket_queryset_by_pet_kindergarden_id(self, pet_kindergarden_id: int) -> QuerySet[Ticket]:
+    def get_queryset_by_pet_kindergarden_id(self, pet_kindergarden_id: int) -> QuerySet[Ticket]:
         """이 함수는 반려동물 유치원 아이디로 티켓 쿼리셋을 조회합니다.
 
         Args:
@@ -20,7 +20,7 @@ class TicketSelector(AbstractTicketSelector):
         """
         return Ticket.objects.filter(pet_kindergarden_id=pet_kindergarden_id)
 
-    def get_ticket_by_id(self, ticket_id: int) -> Optional[Ticket]:
+    def get_by_id(self, ticket_id: int) -> Optional[Ticket]:
         """이 함수는 티켓 아이디로 티켓을 조회합니다.
 
         Args:
@@ -34,7 +34,7 @@ class TicketSelector(AbstractTicketSelector):
         except Ticket.DoesNotExist:
             return None
 
-    def get_undeleted_ticket_by_pet_kindergarden_id(self, pet_kindergarden_id: int) -> QuerySet[Ticket]:
+    def get_querset_by_pet_kindergarden_id_for_undeleted_ticket(self, pet_kindergarden_id: int) -> QuerySet[Ticket]:
         """이 함수는 반려동물 유치원 아이디로 삭제되지 않은 티켓 쿼리셋을 조회합니다.
 
         Args:
@@ -49,7 +49,7 @@ class TicketSelector(AbstractTicketSelector):
             deleted_at__isnull=True,
         )
 
-    def get_undeleted_ticket_by_id(self, ticket_id: int) -> Optional[Ticket]:
+    def get_by_pet_id_for_undeleted_ticket(self, ticket_id: int) -> Optional[Ticket]:
         """이 함수는 티켓 아이디로 삭제되지 않은 티켓을 조회합니다.
 
         Args:

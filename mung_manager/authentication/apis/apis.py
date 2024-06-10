@@ -94,7 +94,7 @@ class KakaoLoginAPI(APIView):
         )
 
         # 반려견 유치원 등록 여부 확인
-        is_partner_enrolled = self._pet_kindergarden_selector.check_is_exists_pet_kindergarden_by_user(user=user)
+        is_partner_enrolled = self._pet_kindergarden_selector.exists_by_user(user=user)
 
         # 유저 토큰 발급
         self._auth_service.authenticate_user(user)

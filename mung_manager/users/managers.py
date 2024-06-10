@@ -23,6 +23,7 @@ class UserManager(BaseUserManager):
             user_social_provider_id=social_provider,
             **extra_fields,
         )
+        # @TODO: Fixed Type
         user.set_unusable_password()  # type: ignore
         user.save(using=self._db)
 
@@ -49,6 +50,7 @@ class UserManager(BaseUserManager):
             user_social_provider_id=UserProvider.EMAIL.value,
             **extra_fields,
         )
+        # @TODO: Fixed Type
         user.set_password(password)  # type: ignore
         user.save(using=self._db)
 
@@ -74,6 +76,7 @@ class UserManager(BaseUserManager):
             user_social_provider_id=UserProvider.EMAIL.value,
             **extra_fields,
         )
+        # @TODO: Fixed Type
         user.set_password(password)  # type: ignore
         user.save(using=self._db)
 
