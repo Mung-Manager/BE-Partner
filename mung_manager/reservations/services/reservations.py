@@ -594,7 +594,7 @@ class ReservationService(AbstractReservationService):
 
             # 티켓 사용 횟수 증가(낙관적 잠금 처리)
             # 단. 티켓의 만료기간이 오늘 기준 과거일 경우 이용권 증가를 하지 않음
-            if reservation.customer_ticket.ticket.expired_at.date() >= timezone.now().date():
+            if reservation.customer_ticket.expired_at.date() >= timezone.now().date():
                 try:
                     customet_ticket = reservation.customet_ticket
                     customet_ticket.used_count -= 1
