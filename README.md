@@ -132,4 +132,6 @@ make mypy
 ### 어플리케이션 아키텍처
 - 작성 중
 ### 인프라 아키텍처
-- 작성 중
+- TOBE
+
+![image](https://github.com/mung-manager/partner-be/assets/104830931/02fbc71a-ae30-4c51-9b8e-3a63d3ca7d1b)
