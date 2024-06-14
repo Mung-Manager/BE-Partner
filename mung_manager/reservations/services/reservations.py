@@ -596,10 +596,10 @@ class ReservationService(AbstractReservationService):
             # 단. 티켓의 만료기간이 오늘 기준 과거일 경우 이용권 증가를 하지 않음
             if reservation.customer_ticket.expired_at.date() >= timezone.now().date():
                 try:
-                    customet_ticket = reservation.customet_ticket
-                    customet_ticket.used_count -= 1
-                    customet_ticket.unused_count += 1
-                    customet_ticket.save(update_fields=["used_count", "unused_count", "version"])
+                    customer_ticket = reservation.customer_ticket
+                    customer_ticket.used_count -= 1
+                    customer_ticket.unused_count += 1
+                    customer_ticket.save(update_fields=["used_count", "unused_count", "version"])
                 except RecordModifiedError:
                     raise ValidationException(
                         detail=SYSTEM_CODE.message("CONFILCT_CUSTOMER_TICKET"),
