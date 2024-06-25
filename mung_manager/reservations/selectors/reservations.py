@@ -188,7 +188,7 @@ class ReservationSelector(AbstractReservationSelector):
     def get_queryset_for_customer_pet_duplicated_reserved_at(
         self, customer_pet_id: int, reserved_at: str, end_at: str
     ) -> list[Optional[str]]:
-        """고객 반려동물 아이디와 예약 시작일과 종료일로 중복된 예약 날짜 리스트를 조회합니다.
+        """고객 반려동물 아이디와 예약 시작일과 종료일로 취소된 예약을 제외한 중복된 예약 날짜 리스트를 조회합니다.
 
         Args:
             customer_pet_id (int): 고객 반려동물 아이디
@@ -200,8 +200,11 @@ class ReservationSelector(AbstractReservationSelector):
         """
         duplicated_dates = (
             Reservation.objects.filter(
-                customer_pet_id=customer_pet_id, reserved_at__lte=end_at, end_at__gte=reserved_at
+                customer_pet_id=customer_pet_id,
+                reserved_at__lte=end_at,
+                end_at__gte=reserved_at,
             )
+            .exclude(reservation_status=ReservationStatus.CANCELED.value)
             .annotate(reserved_at_str=Cast("reserved_at", DateField()))
             .values_list("reserved_at_str", flat=True)
         )
