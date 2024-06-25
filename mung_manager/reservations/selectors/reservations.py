@@ -33,7 +33,6 @@ class ReservationSelector(AbstractReservationSelector):
         reservations = (
             Reservation.objects.filter(
                 pet_kindergarden_id=pet_kindergarden_id,
-                reserved_at__date=reserved_at,
             )
             .select_related(
                 "customer",
@@ -42,9 +41,18 @@ class ReservationSelector(AbstractReservationSelector):
                 "customer_ticket__ticket",
             )
             .filter(
+                (
+                    Q(customer_ticket__ticket__ticket_type=TicketType.HOTEL.value)
+                    & Q(reserved_at__date__lte=reserved_at, end_at__date__gt=reserved_at)
+                    & Q(depth=0)
+                )
+                | (
+                    Q(customer_ticket__ticket__ticket_type__in=[TicketType.TIME.value, TicketType.ALL_DAY.value])
+                    & Q(reserved_at__date=reserved_at)
+                )
+            )
+            .filter(
                 ~Q(reservation_status=ReservationStatus.CANCELED.value),
-                Q(customer_ticket__ticket__ticket_type=TicketType.HOTEL.value, depth=0)
-                | ~Q(customer_ticket__ticket__ticket_type=TicketType.HOTEL.value),
             )
         )
 
@@ -59,13 +67,6 @@ class ReservationSelector(AbstractReservationSelector):
                 hotel_reservations.append(reservation)
                 hotel_reservation_ids.append(reservation.id)
 
-        if hotel_reservation_ids:
-            reservation_tree_end_at = self.get_by_parent_ids_for_end_at(hotel_reservation_ids)
-            for reservation in hotel_reservations:
-                for end_at_pair in reservation_tree_end_at:
-                    if end_at_pair[0] == reservation.id:
-                        reservation.end_at = end_at_pair[1]
-                        break
         return {"time": time_reservations, "all_day": all_day_reservations, "hotel": hotel_reservations}
 
     def get_by_id_for_uncanceled_reservation(self, reservation_id: int) -> Optional[Reservation]:
@@ -120,39 +121,6 @@ class ReservationSelector(AbstractReservationSelector):
             QuerySet[Reservation]: 예약 쿼리셋을 반환하며 존재하지 않으면 빈 쿼리셋을 반환
         """
         return Reservation.objects.filter(id__in=reservation_ids)
-
-    def get_by_parent_ids_for_end_at(self, parent_ids: list[int]) -> list[tuple[int, str]]:
-        """부모 예약 아이디로 예약 퇴실 시간을 조회합니다.
-
-        Args:
-            parent_ids (list[int]): 부모 예약 아이디 리스트
-
-        Returns:
-            list[tuple[int, str]]: 부모 예약 아이디와 예약 퇴실 시간을 튜플로 반환
-        """
-        with connection.cursor() as cursor:
-            query = """
-            WITH RECURSIVE CTE AS (
-                -- Anchor member
-                SELECT parent_id AS root_id, reservation_id, parent_id, depth, end_at AS max_end_at
-                FROM reservation
-                WHERE parent_id IN %s
-
-                UNION ALL
-
-                -- Recursive member
-                SELECT c.root_id, r.reservation_id, r.parent_id, r.depth, r.end_at AS max_end_at
-                FROM reservation r
-                INNER JOIN CTE c ON r.parent_id = c.reservation_id
-            )
-
-            SELECT root_id, max_end_at
-            FROM CTE
-            WHERE reservation_id NOT IN (SELECT parent_id FROM reservation WHERE parent_id IS NOT NULL);
-            """
-            cursor.execute(query, [tuple(parent_ids)])
-            result = cursor.fetchall()
-        return result
 
     def get_child_ids_by_parent_id(self, parent_id: int) -> list[tuple[int, None]]:
         """부모 예약 아이디로 모든 자식 예약 아이디를 조회합니다.

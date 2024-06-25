@@ -328,7 +328,7 @@ class ReservationService(AbstractReservationService):
 
             else:
                 # 일간 예약 생성 및 증가 처리 (호텔권)
-                date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days + 1)]
+                date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days)]
                 existing_daily_reservations = (
                     self._daily_reservation_selector.get_by_pet_kindergarden_id_and_reserved_at_and_end_at(
                         pet_kindergarden_id=pet_kindergarden_id,
@@ -406,13 +406,11 @@ class ReservationService(AbstractReservationService):
             parent_id = None
             total_ticket_count = timedelta(days=(end_at - reserved_at).days).days
             current_ticket_count = 0
-            current_reserved_at = reserved_at
 
-            # 티켓 사용 횟수와 reserved_at, end_at 일치 여부 검증
+            # 티켓 사용 횟수 검증
             for customer_ticket in customer_tickets:
                 current_ticket_count = customer_ticket.unused_count
                 if total_ticket_count > current_ticket_count:
-                    current_end_at = current_reserved_at + timedelta(days=customer_ticket.unused_count)
                     try:
                         customer_ticket.used_count += current_ticket_count
                         customer_ticket.unused_count -= current_ticket_count
@@ -424,8 +422,6 @@ class ReservationService(AbstractReservationService):
                         )
 
                 else:
-                    current_reserved_at = current_end_at
-                    current_end_at = current_reserved_at + timedelta(days=total_ticket_count)
                     try:
                         current_ticket_count = total_ticket_count
                         customer_ticket.used_count += current_ticket_count
@@ -439,8 +435,8 @@ class ReservationService(AbstractReservationService):
 
                 # 예약 생성
                 reservation = Reservation.objects.create(
-                    reserved_at=current_reserved_at,
-                    end_at=current_end_at,
+                    reserved_at=reserved_at,
+                    end_at=end_at,
                     is_attended=False,
                     parent_id=parent_id,
                     depth=depth,
@@ -460,11 +456,10 @@ class ReservationService(AbstractReservationService):
                 )
                 depth += 1
                 parent_id = reservation.id
-                current_reserved_at = current_end_at
                 total_ticket_count -= current_ticket_count
 
             # 일간 예약 생성 및 증가 처리
-            date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days + 1)]
+            date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days)]
             existing_daily_reservations = (
                 self._daily_reservation_selector.get_by_pet_kindergarden_id_and_reserved_at_and_end_at(
                     pet_kindergarden_id=pet_kindergarden_id,

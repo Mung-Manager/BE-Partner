@@ -36,10 +36,6 @@ class AbstractReservationSelector(ABC):
         raise NotImplementedException()
 
     @abstractmethod
-    def get_by_parent_ids_for_end_at(self, parent_ids: list[int]) -> list[tuple[int, str]]:
-        raise NotImplementedException()
-
-    @abstractmethod
     def get_child_ids_by_parent_id(self, parent_id: int) -> list[tuple[int, None]]:
         raise NotImplementedException()
 
