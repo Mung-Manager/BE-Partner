@@ -31,7 +31,7 @@ jobs:
         run: docker compose run partner_service poetry run flake8
 
       - name: Run mypy
-        run: docker compose -run partner_service poetry run mypy --config mypy.ini mung_manager/
+        run: docker compose run partner_service poetry run mypy --config mypy.ini mung_manager/
 
       - name: Notify Slack on Success
         if: success()
