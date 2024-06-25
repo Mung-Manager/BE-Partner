@@ -17,3 +17,9 @@ class AbstractUserSelector(ABC):
         email: Optional[str] = None,
     ) -> bool:
         raise NotImplementedException()
+
+
+class AbstractGroupSelector(ABC):
+    @abstractmethod
+    def exists_by_id_and_user(self, group_id: int, user) -> bool:
+        raise NotImplementedException()

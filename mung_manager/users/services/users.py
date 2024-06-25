@@ -8,7 +8,9 @@ from mung_manager.errors.exceptions import (
     AlreadyExistsException,
     AuthenticationFailedException,
 )
+from mung_manager.users.enums import AuthGroup
 from mung_manager.users.models import User
+from mung_manager.users.selectors.groups import GroupSelector
 from mung_manager.users.selectors.users import UserSelector
 from mung_manager.users.services.abstracts import AbstractUserService
 
@@ -16,8 +18,9 @@ from mung_manager.users.services.abstracts import AbstractUserService
 class UserService(AbstractUserService):
     """이 클래스는 유저를 DB에 PUSH하는 비즈니스 로직을 담당합니다."""
 
-    def __init__(self, user_selector: UserSelector):
+    def __init__(self, user_selector: UserSelector, group_selector: GroupSelector):
         self._user_selector = user_selector
+        self._group_selector = group_selector
 
     @transaction.atomic
     def create_kakao_user(
@@ -55,11 +58,17 @@ class UserService(AbstractUserService):
 
         user = self._user_selector.get_by_social_id(social_id)
 
-        # 전화번호가 변경되었을 경우 업데이트
-        if user is not None and user.phone_number != phone_number:
-            user.phone_number = phone_number
-            user.save(update_fields=["phone_number"])
+        if user is not None:
+            # 전화번호가 변경되었을 경우 업데이트
+            if user.phone_number != phone_number:
+                user.phone_number = phone_number
+                user.save(update_fields=["phone_number"])
 
+            # 유저 사장님 권한이 없을 경우 권한 부여
+            if self._group_selector.exists_by_id_and_user(group_id=AuthGroup.PARTNER.value, user=user) is False:
+                user.groups.add(AuthGroup.PARTNER.value)
+
+        # 유저가 없을 경우 생성
         if user is None:
             user = User.objects.create_kakao_user(
                 email=email,
