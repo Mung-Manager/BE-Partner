@@ -43,7 +43,7 @@ class ReservationSelector(AbstractReservationSelector):
             .filter(
                 (
                     Q(customer_ticket__ticket__ticket_type=TicketType.HOTEL.value)
-                    & Q(reserved_at__date__lte=reserved_at, end_at__date__gt=reserved_at)
+                    & Q(reserved_at__date__lte=reserved_at, end_at__date__gte=reserved_at)
                     & Q(depth=0)
                 )
                 | (

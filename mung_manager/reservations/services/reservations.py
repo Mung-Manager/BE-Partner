@@ -328,7 +328,9 @@ class ReservationService(AbstractReservationService):
 
             else:
                 # 일간 예약 생성 및 증가 처리 (호텔권)
-                date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days)]
+                # date_range + 1의 이유: 이용권 감소는 몇박으로 횟수를 확인하지만
+                # 날짜 표시로는 몇일로 표시되기 때문에 +1을 해줌
+                date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days + 1)]
                 existing_daily_reservations = (
                     self._daily_reservation_selector.get_by_pet_kindergarden_id_and_reserved_at_and_end_at(
                         pet_kindergarden_id=pet_kindergarden_id,
@@ -459,7 +461,9 @@ class ReservationService(AbstractReservationService):
                 total_ticket_count -= current_ticket_count
 
             # 일간 예약 생성 및 증가 처리
-            date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days)]
+            # date_range + 1의 이유: 이용권 감소는 몇박으로 횟수를 확인하지만
+            # 날짜 표시로는 몇일로 표시되기 때문에 +1을 해줌
+            date_range = [(reserved_at + timedelta(days=x)).date() for x in range((end_at - reserved_at).days + 1)]
             existing_daily_reservations = (
                 self._daily_reservation_selector.get_by_pet_kindergarden_id_and_reserved_at_and_end_at(
                     pet_kindergarden_id=pet_kindergarden_id,
