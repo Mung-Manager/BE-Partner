@@ -274,6 +274,7 @@ class ReservationCustomerPetListAPI(APIAuthMixin, APIView):
             fields={
                 "id": serializers.IntegerField(label="고객 아이디"),
                 "name": serializers.CharField(label="고객 이름"),
+                "phone_number": serializers.CharField(label="휴대폰 번호"),
             },
         )
 
