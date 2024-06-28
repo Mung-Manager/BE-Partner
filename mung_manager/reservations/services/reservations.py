@@ -232,9 +232,9 @@ class ReservationService(AbstractReservationService):
                     )
 
                 #  반려견 유치원 영업시간 검증
-                if pet_kindergarden.business_start_hour.strftime("%H:%M:%S") < reserved_at.strftime(
+                if pet_kindergarden.business_start_hour.strftime("%H:%M:%S") > reserved_at.strftime(
                     "%H:%M:%S"
-                ) or pet_kindergarden.business_start_hour.strftime("%H:%M:%S") > end_at.strftime("%H:%M:%S"):
+                ) or pet_kindergarden.business_end_hour.strftime("%H:%M:%S") < end_at.strftime("%H:%M:%S"):
                     raise ValidationException(
                         detail=SYSTEM_CODE.message("INVALID_PET_KINDERGARDEN_BUSINESS_HOUR"),
                         code=SYSTEM_CODE.code("INVALID_PET_KINDERGARDEN_BUSINESS_HOUR"),
