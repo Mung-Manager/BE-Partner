@@ -14,7 +14,7 @@ pillow = "^10.2.0"
 attrs = "^23.2.0"
 requests = "^2.32.2"
 django-storages = {extras = ["aiobotocore"], version = "^1.14.2"}
-djangorestframework = "^3.15.1"
+djangorestframework = "^3.15.2"
 django-cors-headers = "^4.2.0"
 drf-spectacular = {extras = ["sidecar"], version = "^0.27.2"}
 djangorestframework-simplejwt = "5.3.0"
